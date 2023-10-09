@@ -15,7 +15,7 @@ entity butterfly is
 		wr: in std_logic_vector(l+1 downto 0); -- (1;l+2;l)
 		wi: in std_logic_vector(l+1 downto 0); -- (1;l+2;l)
 		S1r: out std_logic_vector(l downto 0); -- (1;l+1;n)
-		S1i: out std_logic_vector(l downto 0)  -- (1;l+1;n)
+		S1i: out std_logic_vector(l downto 0);  -- (1;l+1;n)
 		S2r: out std_logic_vector(l downto 0); -- (1;l+1;n)
 		S2i: out std_logic_vector(l downto 0)  -- (1;l+1;n)
 	);
@@ -39,16 +39,16 @@ begin
 	wiBi <= std_logic_vector(to_signed(to_integer(signed(wi)) * to_integer(signed(Bi)), 2*l+2));
 
 	S2r <= std_logic_vector(to_signed(
-		   to_integer(signed(wrAr(2*l-n+1 downto l-n))) + to_integer(signed('0' & wrAr(l-n-1))) -- Approximation
-		   - to_integer(signed(wrBr(2*l-n+1 downto l-n))) + to_integer(signed('0' & wrBr(l-n-1))) -- Approximation
-		   - to_integer(signed(wiAi(2*l-n+1 downto l-n))) + to_integer(signed('0' & wiAi(l-n-1))) -- Approximation
-		   + to_integer(signed(wiBi(2*l-n+1 downto l-n))) + to_integer(signed('0' & wiBi(l-n-1))) -- Approximation
+		   to_integer(signed(wrAr(2*l-n+1 downto l-n))) + to_integer(signed(std_logic_vector('0' & wrAr(l-n-1)))) -- Approximation
+		   - to_integer(signed(wrBr(2*l-n+1 downto l-n))) + to_integer(signed(std_logic_vector('0' & wrBr(l-n-1)))) -- Approximation
+		   - to_integer(signed(wiAi(2*l-n+1 downto l-n))) + to_integer(signed(std_logic_vector('0' & wiAi(l-n-1)))) -- Approximation
+		   + to_integer(signed(wiBi(2*l-n+1 downto l-n))) + to_integer(signed(std_logic_vector('0' & wiBi(l-n-1)))) -- Approximation
 		   , l+1));
 
 	S2i <= std_logic_vector(to_signed(
-		   to_integer(signed(wrAi(2*l-n+1 downto l-n))) + to_integer(signed('0' & wrAi(l-n-1))) -- Approximation
-		   - to_integer(signed(wrBi(2*l-n+1 downto l-n))) + to_integer(signed('0' & wrBi(l-n-1))) -- Approximation
-		   + to_integer(signed(wiAr(2*l-n+1 downto l-n))) + to_integer(signed('0' & wiAr(l-n-1))) -- Approximation
-		   - to_integer(signed(wiBr(2*l-n+1 downto l-n))) + to_integer(signed('0' & wiBr(l-n-1))) -- Approximation
+		   to_integer(signed(wrAi(2*l-n+1 downto l-n))) + to_integer(signed(std_logic_vector('0' & wrAi(l-n-1)))) -- Approximation
+		   - to_integer(signed(wrBi(2*l-n+1 downto l-n))) + to_integer(signed(std_logic_vector('0' & wrBi(l-n-1)))) -- Approximation
+		   + to_integer(signed(wiAr(2*l-n+1 downto l-n))) + to_integer(signed(std_logic_vector('0' & wiAr(l-n-1)))) -- Approximation
+		   - to_integer(signed(wiBr(2*l-n+1 downto l-n))) + to_integer(signed(std_logic_vector('0' & wiBr(l-n-1)))) -- Approximation
 		   , l+1));
 end architecture;
