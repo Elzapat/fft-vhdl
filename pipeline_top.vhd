@@ -14,12 +14,12 @@ entity top is
 		out_ready: in std_logic;
 		clk: in std_logic;
 		arst: in std_logic;
-		data_in_r: in array (7 downto 0) of std_logic_vector(n downto 0);
-		data_in_i: in array (7 downto 0) of std_logic_vector(n downto 0);
+		data_in_r: in array (0 to 7) of std_logic_vector(l-1 downto 0);
+		data_in_i: in array (0 to 7) of std_logic_vector(l-1 downto 0);
 		in_ready: out std_logic;
 		out_valid: out std_logic;
-		data_out_r: out array (7 downto 0) of std_logic_vector(n downto 0);
-		data_out_i: out array (7 downto 0) of std_logic_vector(n downto 0);
+		data_out_r: out array (0 to 7) of std_logic_vector(l+1 downto 0);
+		data_out_i: out array (0 to 7) of std_logic_vector(l+1 downto 0);
 	);
 end entity;
 
@@ -85,7 +85,9 @@ architecture pipeline of top is
     constant w_3_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_3_8.IM * factor_resize_multiplier), twiddle_factor_width));
 
 	signal en1, en2, en3: std_logic;
-	signal out_1_r, out_1_i, in_2_r, in_2_i, out_2_r, out_2_i, in_3_r, in_3_i, out_3_r, out_3_i: std_logic_vector(7 downto 0);
+	signal out_1_r, out_1_i, in_2_r, in_2_i: array (0 to 7) of std_logic_vector(l-1 downto 0);
+	signal out_2_r, out_2_i, in_3_r, in_3_i: array (0 to 7) of std_logic_vector(l downto 0);
+	signal out_3_r, out_3_i: array (0 to 7) of std_logic_vector(l+1 downto 0);
 
 begin
 	control: fsm
@@ -175,7 +177,7 @@ begin
 
 	B21: butterfly
 		generic map(
-			l => l,
+			l => l+1,
 			n => n
 		)
 		port map(
@@ -193,7 +195,7 @@ begin
 
 	B22: butterfly
 		generic map(
-			l => l,
+			l => l+1,
 			n => n
 		)
 		port map(
@@ -211,7 +213,7 @@ begin
 
 	B23: butterfly
 		generic map(
-			l => l,
+			l => l+1,
 			n => n
 		)
 		port map(
@@ -229,7 +231,7 @@ begin
 
 	B24: butterfly
 		generic map(
-			l => l,
+			l => l+1,
 			n => n
 		)
 		port map(
@@ -247,7 +249,7 @@ begin
 
 	B31: butterfly
 		generic map(
-			l => l,
+			l => l+2,
 			n => n
 		)
 		port map(
@@ -265,7 +267,7 @@ begin
 
 	B32: butterfly
 		generic map(
-			l => l,
+			l => l+2,
 			n => n
 		)
 		port map(
@@ -283,7 +285,7 @@ begin
 
 	B33: butterfly
 		generic map(
-			l => l,
+			l => l+2,
 			n => n
 		)
 		port map(
@@ -299,9 +301,9 @@ begin
 			S2i => out_3_i(5)
 		);
 
-	B31: butterfly
+	B34: butterfly
 		generic map(
-			l => l,
+			l => l+2,
 			n => n
 		)
 		port map(
@@ -317,4 +319,48 @@ begin
 			S2i => out_3_i(7)
 		);
 
+	process(arst_n, clk)
+	begin
+		if arst_n = '0' then
+			out_1_r <= (others => (others => '0'));
+			out_1_i <= (others => (others => '0'));
+			in_2_r <= (others => (others => '0'));
+			in_2_i <= (others => (others => '0'));
+			out_2_r <= (others => (others => '0'));
+			out_2_i <= (others => (others => '0'));
+			in_3_r <= (others => (others => '0'));
+			in_3_i <= (others => (others => '0'));
+			out_3_r <= (others => (others => '0'));
+			out_3_i <= (others => (others => '0'));
+			data_out_r <= (others => (others => '0'));
+			data_out_i <= (others => (others => '0'));
+		else if rising_edge(clk) then
+			if en1 = '1' then
+				in_2_r <= out_1_r;
+				in_2_i <= out_1_i;
+			end if;
+			if en2 = '1' then
+				in_3_r <= out_2_r;
+				in_3_i <= out_2_i;
+			end if;
+			if en3 = '1' then
+				data_out_r(0) <= out_3_r(0);
+				data_out_i(0) <= out_3_i(0);
+				data_out_r(4) <= out_3_r(1);
+				data_out_i(4) <= out_3_i(1);
+				data_out_r(2) <= out_3_r(2);
+				data_out_i(2) <= out_3_i(2);
+				data_out_r(6) <= out_3_r(3);
+				data_out_i(6) <= out_3_i(3);
+				data_out_r(1) <= out_3_r(4);
+				data_out_i(1) <= out_3_i(4);
+				data_out_r(5) <= out_3_r(5);
+				data_out_i(5) <= out_3_i(5);
+				data_out_r(3) <= out_3_r(6);
+				data_out_i(3) <= out_3_i(6);
+				data_out_r(7) <= out_3_r(7);
+				data_out_i(7) <= out_3_i(7);
+			end if;
+		end if;
+	end process;
 end architecture;
