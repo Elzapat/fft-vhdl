@@ -96,6 +96,10 @@ begin
                             state <= "111";
                         end if;
                 end case;
+
+                en1 <= state(2);
+                en2 <= state(1);
+                en3 <= state(0);
             end if
         end if;
     end process;
