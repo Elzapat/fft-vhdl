@@ -33,19 +33,27 @@ architecture example of butterfly_tb is
     constant Pi : real := 3.14159265;
 
     constant exp_factor_1_8 : complex := (0.0, -(2.0*Pi*real(1)/real(8)));
+    constant exp_factor_2_8 : complex := (0.0, -(2.0*Pi*real(2)/real(8)));
+    constant exp_factor_3_8 : complex := (0.0, -(2.0*Pi*real(3)/real(8)));
 
     constant w_1_8 : complex := EXP(exp_factor_1_8);
+    constant w_2_8 : complex := EXP(exp_factor_2_8);
+    constant w_3_8 : complex := EXP(exp_factor_3_8);
 
     constant w_1_8_real : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_1_8.RE * factor_resize_multiplier), twiddle_factor_width));
     constant w_1_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_1_8.IM * factor_resize_multiplier), twiddle_factor_width));
 
+    constant w_2_8_real : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_2_8.RE * factor_resize_multiplier), twiddle_factor_width));
+    constant w_2_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_2_8.IM * factor_resize_multiplier), twiddle_factor_width));
 
-    constant l: integer := 16;
-    constant n: integer := 8;
+    constant w_3_8_real : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_3_8.RE * factor_resize_multiplier), twiddle_factor_width));
+    constant w_3_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_3_8.IM * factor_resize_multiplier), twiddle_factor_width));
 
-    signal Ar, Ai, Br, Bi: std_logic_vector(l-1 downto 0); -- A valeur bidon et B 0, on observe A et w * A en sortie
-    -- Deuxieme test, A = B, 2A sur la premiere sortie et 0 sur la deuxieme
-    signal S1r, S1i, S2r, S2i: std_logic_vector(l downto 0); -- Troisieme test, deux cst aleatoire et on fait le calcul et on vérifie
+    constant l: integer := 6;
+    constant n: integer := 1;
+
+    signal Ar, Ai, Br, Bi: std_logic_vector(l-1 downto 0);
+    signal S1r, S1i, S2r, S2i: std_logic_vector(l downto 0); 
 
 begin
 
@@ -68,7 +76,8 @@ begin
         );
 
     process
-    begin
+    begin 
+        -- Premier test, A valeur bidon et B 0, on observe A et w * A en sortie
         Ar <= std_logic_vector(to_signed(3, Ar'length));
         Ai <= std_logic_vector(to_signed(2, Ai'length));
         Br <= std_logic_vector(to_signed(0, Br'length));
@@ -76,6 +85,7 @@ begin
 
         wait for 100 ns;
 
+        -- Deuxieme test, A = B, 2A sur la premiere sortie et 0 sur la deuxieme
         Ar <= std_logic_vector(to_signed(8, Ar'length));
         Ai <= std_logic_vector(to_signed(3, Ai'length));
         Br <= std_logic_vector(to_signed(8, Br'length));
@@ -83,6 +93,7 @@ begin
 
         wait for 100 ns;
 
+        -- Troisieme test, deux cst aleatoire et on fait le calcul et on vérifie
         Ar <= std_logic_vector(to_signed(93, Ar'length));
         Ai <= std_logic_vector(to_signed(31, Ai'length));
         Br <= std_logic_vector(to_signed(49, Br'length));
