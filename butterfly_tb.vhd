@@ -1,11 +1,11 @@
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.natural_std.all;
+use ieee.numeric_std.all;
 use ieee.math_real.all;
 use ieee.math_complex.all;
 
 entity butterfly_tb is
-end entity
+end entity;
 
 architecture example of butterfly_tb is
     component butterfly is
@@ -23,10 +23,10 @@ architecture example of butterfly_tb is
             S1r: out std_logic_vector(l downto 0);
             S1i: out std_logic_vector(l downto 0);
             S2r: out std_logic_vector(l downto 0);
-            S2i: out std_logic_vector(l downto 0);
+            S2i: out std_logic_vector(l downto 0)
         );
     end component butterfly;
-begin
+
     constant twiddle_factor_width : integer := 8; -- Taille totale de w
     constant factor_resize_multiplier : real := 2.0**(twiddle_factor_width-2);
 
@@ -43,15 +43,17 @@ begin
     constant l: integer := 16;
     constant n: integer := 8;
 
-    signal Ar, Ai, Br, Bi: std_logic_vector(l-1 downto 0) := ; -- A valeur bidon et B 0, on observe A et w * A en sortie
+    signal Ar, Ai, Br, Bi: std_logic_vector(l-1 downto 0); -- A valeur bidon et B 0, on observe A et w * A en sortie
     -- Deuxieme test, A = B, 2A sur la premiere sortie et 0 sur la deuxieme
     signal S1r, S1i, S2r, S2i: std_logic_vector(l downto 0); -- Troisieme test, deux cst aleatoire et on fait le calcul et on vérifie
+
+begin
 
     butterfly_op : butterfly
         generic map(
             l => l,
             n => n
-        );
+        )
         port map(
             Ar => Ar,
             Ai => Ai,
@@ -67,24 +69,24 @@ begin
 
     process
     begin
-        Ar <= std_logic_vector(to_signed(3));
-        Ai <= std_logic_vector(to_signed(2));
-        Br <= std_logic_vector(to_signed(0));
-        Bi <= std_logic_vector(to_signed(0));
+        Ar <= std_logic_vector(to_signed(3, Ar'length));
+        Ai <= std_logic_vector(to_signed(2, Ai'length));
+        Br <= std_logic_vector(to_signed(0, Br'length));
+        Bi <= std_logic_vector(to_signed(0, Bi'length));
 
         wait for 100 ns;
 
-        Ar <= std_logic_vector(to_signed(8));
-        Ai <= std_logic_vector(to_signed(3));
-        Br <= std_logic_vector(to_signed(8));
-        Bi <= std_logic_vector(to_signed(3));
+        Ar <= std_logic_vector(to_signed(8, Ar'length));
+        Ai <= std_logic_vector(to_signed(3, Ai'length));
+        Br <= std_logic_vector(to_signed(8, Br'length));
+        Bi <= std_logic_vector(to_signed(3, Bi'length));
 
         wait for 100 ns;
 
-        Ar <= std_logic_vector(to_signed(93));
-        Ai <= std_logic_vector(to_signed(21));
-        Br <= std_logic_vector(to_signed(49));
-        Bi <= std_logic_vector(to_signed(29));
+        Ar <= std_logic_vector(to_signed(93, Ar'length));
+        Ai <= std_logic_vector(to_signed(31, Ai'length));
+        Br <= std_logic_vector(to_signed(49, Br'length));
+        Bi <= std_logic_vector(to_signed(29, Bi'length));
 
         wait for 100 ns;
     end process;
