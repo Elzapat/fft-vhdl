@@ -7,7 +7,7 @@ use ieee.math_complex.all;
 entity top is
 	generic(
 		l: integer; -- Data size
-		n: integer; -- Bits after the decimal point
+		n: integer -- Bits after the decimal point
 	);
 	port(
 		in_valid: in std_logic;
@@ -19,7 +19,7 @@ entity top is
 		in_ready: out std_logic;
 		out_valid: out std_logic;
 		data_out_r: out array (0 to 7) of std_logic_vector(l+1 downto 0);
-		data_out_i: out array (0 to 7) of std_logic_vector(l+1 downto 0);
+		data_out_i: out array (0 to 7) of std_logic_vector(l+1 downto 0)
 	);
 end entity;
 
