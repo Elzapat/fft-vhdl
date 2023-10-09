@@ -1,5 +1,8 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.math_real.all;
+use ieee.math_complex.all;
 
 entity top is
 	generic(
@@ -54,6 +57,33 @@ architecture pipeline of top is
 		);
 	end component;
 
+    constant twiddle_factor_width : integer := 8; -- Taille totale de w
+    constant factor_resize_multiplier : real := 2.0**(twiddle_factor_width-2);
+
+    constant Pi : real := 3.14159265;
+
+    constant exp_factor_0_8 : complex := (0.0, -(2.0*Pi*real(0)/real(8)));
+    constant exp_factor_1_8 : complex := (0.0, -(2.0*Pi*real(1)/real(8)));
+    constant exp_factor_2_8 : complex := (0.0, -(2.0*Pi*real(2)/real(8)));
+    constant exp_factor_3_8 : complex := (0.0, -(2.0*Pi*real(3)/real(8)));
+
+    constant w_0_8 : complex := EXP(exp_factor_0_8);
+    constant w_1_8 : complex := EXP(exp_factor_1_8);
+    constant w_2_8 : complex := EXP(exp_factor_2_8);
+    constant w_3_8 : complex := EXP(exp_factor_3_8);
+
+    constant w_0_8_real : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_0_8.RE * factor_resize_multiplier), twiddle_factor_width));
+    constant w_0_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_0_8.IM * factor_resize_multiplier), twiddle_factor_width));
+
+    constant w_1_8_real : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_1_8.RE * factor_resize_multiplier), twiddle_factor_width));
+    constant w_1_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_1_8.IM * factor_resize_multiplier), twiddle_factor_width));
+
+    constant w_2_8_real : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_2_8.RE * factor_resize_multiplier), twiddle_factor_width));
+    constant w_2_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_2_8.IM * factor_resize_multiplier), twiddle_factor_width));
+
+    constant w_3_8_real : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_3_8.RE * factor_resize_multiplier), twiddle_factor_width));
+    constant w_3_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_3_8.IM * factor_resize_multiplier), twiddle_factor_width));
+
 	signal en1, en2, en3: std_logic;
 	signal out_1_r, out_1_i, in_2_r, in_2_i, out_2_r, out_2_i, in_3_r, in_3_i, out_3_r, out_3_i: std_logic_vector(7 downto 0);
 
@@ -81,8 +111,8 @@ begin
 			Ai => data_in_i(0),
 			Br => data_in_r(4),
 			Bi => data_in_i(4),
-			wr => --TODO
-			wi => --TODO
+			wr => w_0_8_real,
+			wi => w_0_8_imag,
 			S1r => out_1_r(0),
 			S1i => out_1_i(0),
 			S2r => out_1_r(4),
@@ -99,8 +129,8 @@ begin
 			Ai => data_in_i(1),
 			Br => data_in_r(5),
 			Bi => data_in_i(5),
-			wr => --TODO
-			wi => --TODO
+			wr => w_1_8_real,
+			wi => w_1_8_imag,
 			S1r => out_1_r(1),
 			S1i => out_1_i(1),
 			S2r => out_1_r(5),
@@ -117,8 +147,8 @@ begin
 			Ai => data_in_i(2),
 			Br => data_in_r(6),
 			Bi => data_in_i(6),
-			wr => --TODO
-			wi => --TODO
+			wr => w_2_8_real,
+			wi => w_2_8_imag,
 			S1r => out_1_r(2),
 			S1i => out_1_i(2),
 			S2r => out_1_r(6),
@@ -135,8 +165,8 @@ begin
 			Ai => data_in_i(3),
 			Br => data_in_r(7),
 			Bi => data_in_i(7),
-			wr => --TODO
-			wi => --TODO
+			wr => w_3_8_real,
+			wi => w_3_8_imag,
 			S1r => out_1_r(3),
 			S1i => out_1_i(3),
 			S2r => out_1_r(7),
@@ -153,8 +183,8 @@ begin
 			Ai => in_2_i(0),
 			Br => in_2_r(2),
 			Bi => in_2_i(2),
-			wr => --TODO
-			wi => --TODO
+			wr => w_0_8_real,
+			wi => w_0_8_imag,
 			S1r => out_2_r(0),
 			S1i => out_2_i(0),
 			S2r => out_2_r(2),
@@ -171,8 +201,8 @@ begin
 			Ai => in_2_i(1),
 			Br => in_2_r(3),
 			Bi => in_2_i(3),
-			wr => --TODO
-			wi => --TODO
+			wr => w_2_8_real,
+			wi => w_2_8_imag,
 			S1r => out_2_r(1),
 			S1i => out_2_i(1),
 			S2r => out_2_r(3),
@@ -189,8 +219,8 @@ begin
 			Ai => in_2_i(4),
 			Br => in_2_r(6),
 			Bi => in_2_i(6),
-			wr => --TODO
-			wi => --TODO
+			wr => w_0_8_real,
+			wi => w_0_8_imag,
 			S1r => out_2_r(4),
 			S1i => out_2_i(4),
 			S2r => out_2_r(6),
@@ -207,8 +237,8 @@ begin
 			Ai => in_2_i(5),
 			Br => in_2_r(7),
 			Bi => in_2_i(7),
-			wr => --TODO
-			wi => --TODO
+			wr => w_2_8_real,
+			wi => w_2_8_imag,
 			S1r => out_2_r(5),
 			S1i => out_2_i(5),
 			S2r => out_2_r(7),
@@ -225,8 +255,8 @@ begin
 			Ai => in_3_i(0),
 			Br => in_3_r(1),
 			Bi => in_3_i(1),
-			wr => --TODO
-			wi => --TODO
+			wr => w_0_8_real,
+			wi => w_0_8_imag,
 			S1r => out_3_r(0),
 			S1i => out_3_i(0),
 			S2r => out_3_r(1),
@@ -243,8 +273,8 @@ begin
 			Ai => in_3_i(2),
 			Br => in_3_r(3),
 			Bi => in_3_i(3),
-			wr => --TODO
-			wi => --TODO
+			wr => w_0_8_real,
+			wi => w_0_8_imag,
 			S1r => out_3_r(2),
 			S1i => out_3_i(2),
 			S2r => out_3_r(3),
@@ -261,8 +291,8 @@ begin
 			Ai => in_3_i(4),
 			Br => in_3_r(5),
 			Bi => in_3_i(5),
-			wr => --TODO
-			wi => --TODO
+			wr => w_0_8_real,
+			wi => w_0_8_imag,
 			S1r => out_3_r(4),
 			S1i => out_3_i(4),
 			S2r => out_3_r(5),
@@ -279,8 +309,8 @@ begin
 			Ai => in_3_i(6),
 			Br => in_3_r(7),
 			Bi => in_3_i(7),
-			wr => --TODO
-			wi => --TODO
+			wr => w_0_8_real,
+			wi => w_0_8_imag,
 			S1r => out_3_r(6),
 			S1i => out_3_i(6),
 			S2r => out_3_r(7),
