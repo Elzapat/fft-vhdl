@@ -4,6 +4,9 @@ use ieee.numeric_std.all;
 use ieee.math_real.all;
 use ieee.math_complex.all;
 
+library work;
+use work.twiddle_factor.all;
+
 entity top is
 	generic(
 		l: integer; -- Data size
@@ -57,34 +60,7 @@ architecture pipeline of top is
 		);
 	end component;
 
-	-- w coefficient values computation
-    constant twiddle_factor_width : integer := 10; -- Taille totale de w
-    constant factor_resize_multiplier : real := 2.0**(twiddle_factor_width-2);
-
-    constant Pi : real := 3.14159265;
-
-    constant exp_factor_0_8 : complex := (0.0, -(2.0*Pi*real(0)/real(8)));
-    constant exp_factor_1_8 : complex := (0.0, -(2.0*Pi*real(1)/real(8)));
-    constant exp_factor_2_8 : complex := (0.0, -(2.0*Pi*real(2)/real(8)));
-    constant exp_factor_3_8 : complex := (0.0, -(2.0*Pi*real(3)/real(8)));
-
-    constant w_0_8 : complex := EXP(exp_factor_0_8);
-    constant w_1_8 : complex := EXP(exp_factor_1_8);
-    constant w_2_8 : complex := EXP(exp_factor_2_8);
-    constant w_3_8 : complex := EXP(exp_factor_3_8);
-
-    constant w_0_8_real : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_0_8.RE * factor_resize_multiplier), twiddle_factor_width));
-    constant w_0_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_0_8.IM * factor_resize_multiplier), twiddle_factor_width));
-
-    constant w_1_8_real : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_1_8.RE * factor_resize_multiplier), twiddle_factor_width));
-    constant w_1_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_1_8.IM * factor_resize_multiplier), twiddle_factor_width));
-
-    constant w_2_8_real : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_2_8.RE * factor_resize_multiplier), twiddle_factor_width));
-    constant w_2_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_2_8.IM * factor_resize_multiplier), twiddle_factor_width));
-
-    constant w_3_8_real : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_3_8.RE * factor_resize_multiplier), twiddle_factor_width));
-    constant w_3_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_3_8.IM * factor_resize_multiplier), twiddle_factor_width));
-
+	-- Internal signals
 	signal en1, en2, en3: std_logic;
 	signal out_1_r, out_1_i, in_2_r, in_2_i: std_logic_vector(8*l-1 downto 0);
 	signal out_2_r, out_2_i, in_3_r, in_3_i: std_logic_vector(8*(l+1)-1 downto 0);
@@ -115,8 +91,8 @@ begin
 			Ai => data_in_i(0*l+l-1 downto 0*l),
 			Br => data_in_r(4*l+l-1 downto 4*l),
 			Bi => data_in_i(4*l+l-1 downto 4*l),
-			wr => w_0_8_real,
-			wi => w_0_8_imag,
+			wr => w_0_8_real_10,
+			wi => w_0_8_imag_10,
 			S1r => out_1_r(0*(l+1)+l downto 0*(l+1)),
 			S1i => out_1_i(0*(l+1)+l downto 0*(l+1)),
 			S2r => out_1_r(4*(l+1)+l downto 4*(l+1)),
@@ -133,8 +109,8 @@ begin
 			Ai => data_in_i(1*l+l-1 downto 1*l),
 			Br => data_in_r(5*l+l-1 downto 5*l),
 			Bi => data_in_i(5*l+l-1 downto 5*l),
-			wr => w_1_8_real,
-			wi => w_1_8_imag,
+			wr => w_1_8_real_10,
+			wi => w_1_8_imag_10,
 			S1r => out_1_r(1*(l+1)+l downto 1*(l+1)),
 			S1i => out_1_i(1*(l+1)+l downto 1*(l+1)),
 			S2r => out_1_r(5*(l+1)+l downto 5*(l+1)),
@@ -151,8 +127,8 @@ begin
 			Ai => data_in_i(2*l+l-1 downto 2*l),
 			Br => data_in_r(6*l+l-1 downto 6*l),
 			Bi => data_in_i(6*l+l-1 downto 6*l),
-			wr => w_2_8_real,
-			wi => w_2_8_imag,
+			wr => w_2_8_real_10,
+			wi => w_2_8_imag_10,
 			S1r => out_1_r(2*(l+1)+l downto 2*(l+1)),
 			S1i => out_1_i(2*(l+1)+l downto 2*(l+1)),
 			S2r => out_1_r(6*(l+1)+l downto 6*(l+1)),
@@ -169,8 +145,8 @@ begin
 			Ai => data_in_i(3*l+l-1 downto 3*l),
 			Br => data_in_r(7*l+l-1 downto 7*l),
 			Bi => data_in_i(7*l+l-1 downto 7*l),
-			wr => w_3_8_real,
-			wi => w_3_8_imag,
+			wr => w_3_8_real_10,
+			wi => w_3_8_imag_10,
 			S1r => out_1_r(3*(l+1)+l downto 3*(l+1)),
 			S1i => out_1_i(3*(l+1)+l downto 3*(l+1)),
 			S2r => out_1_r(7*(l+1)+l downto 7*(l+1)),
@@ -188,8 +164,8 @@ begin
 			Ai => in_2_i(0*(l+1)+l downto 0*(l+1)),
 			Br => in_2_r(2*(l+1)+l downto 2*(l+1)),
 			Bi => in_2_i(2*(l+1)+l downto 2*(l+1)),
-			wr => w_0_8_real,
-			wi => w_0_8_imag,
+			wr => w_0_8_real_11,
+			wi => w_0_8_imag_11,
 			S1r => out_2_r(0*(l+2)+l+1 downto 0*(l+2)),
 			S1i => out_2_i(0*(l+2)+l+1 downto 0*(l+2)),
 			S2r => out_2_r(2*(l+2)+l+1 downto 2*(l+2)),
@@ -206,8 +182,8 @@ begin
 			Ai => in_2_i(1*(l+1)+l downto 1*(l+1)),
 			Br => in_2_r(3*(l+1)+l downto 3*(l+1)),
 			Bi => in_2_i(3*(l+1)+l downto 3*(l+1)),
-			wr => w_2_8_real,
-			wi => w_2_8_imag,
+			wr => w_2_8_real_11,
+			wi => w_2_8_imag_11,
 			S1r => out_2_r(1*(l+2)+l+1 downto 1*(l+2)),
 			S1i => out_2_i(1*(l+2)+l+1 downto 1*(l+2)),
 			S2r => out_2_r(3*(l+2)+l+1 downto 3*(l+2)),
@@ -224,8 +200,8 @@ begin
 			Ai => in_2_i(4*(l+1)+l downto 4*(l+1)),
 			Br => in_2_r(6*(l+1)+l downto 6*(l+1)),
 			Bi => in_2_i(6*(l+1)+l downto 6*(l+1)),
-			wr => w_0_8_real,
-			wi => w_0_8_imag,
+			wr => w_0_8_real_11,
+			wi => w_0_8_imag_11,
 			S1r => out_2_r(4*(l+2)+l+1 downto 4*(l+2)),
 			S1i => out_2_i(4*(l+2)+l+1 downto 4*(l+2)),
 			S2r => out_2_r(6*(l+2)+l+1 downto 6*(l+2)),
@@ -242,8 +218,8 @@ begin
 			Ai => in_2_i(5*(l+1)+l downto 5*(l+1)),
 			Br => in_2_r(7*(l+1)+l downto 7*(l+1)),
 			Bi => in_2_i(7*(l+1)+l downto 7*(l+1)),
-			wr => w_2_8_real,
-			wi => w_2_8_imag,
+			wr => w_2_8_real_11,
+			wi => w_2_8_imag_11,
 			S1r => out_2_r(5*(l+2)+l+1 downto 5*(l+2)),
 			S1i => out_2_i(5*(l+2)+l+1 downto 5*(l+2)),
 			S2r => out_2_r(7*(l+2)+l+1 downto 7*(l+2)),
@@ -261,8 +237,8 @@ begin
 			Ai => in_3_i(0*(l+2)+l+1 downto 0*(l+2)),
 			Br => in_3_r(1*(l+2)+l+1 downto 1*(l+2)),
 			Bi => in_3_i(1*(l+2)+l+1 downto 1*(l+2)),
-			wr => w_0_8_real,
-			wi => w_0_8_imag,
+			wr => w_0_8_real_12,
+			wi => w_0_8_imag_12,
 			S1r => out_3_r(0*(l+3)+l+2 downto 0*(l+3)),
 			S1i => out_3_i(0*(l+3)+l+2 downto 0*(l+3)),
 			S2r => out_3_r(1*(l+3)+l+2 downto 1*(l+3)),
@@ -279,8 +255,8 @@ begin
 			Ai => in_3_i(2*(l+2)+l+1 downto 2*(l+2)),
 			Br => in_3_r(3*(l+2)+l+1 downto 3*(l+2)),
 			Bi => in_3_i(3*(l+2)+l+1 downto 3*(l+2)),
-			wr => w_0_8_real,
-			wi => w_0_8_imag,
+			wr => w_0_8_real_12,
+			wi => w_0_8_imag_12,
 			S1r => out_3_r(2*(l+3)+l+2 downto 2*(l+3)),
 			S1i => out_3_i(2*(l+3)+l+2 downto 2*(l+3)),
 			S2r => out_3_r(3*(l+3)+l+2 downto 3*(l+3)),
@@ -297,8 +273,8 @@ begin
 			Ai => in_3_i(4*(l+2)+l+1 downto 4*(l+2)),
 			Br => in_3_r(5*(l+2)+l+1 downto 5*(l+2)),
 			Bi => in_3_i(5*(l+2)+l+1 downto 5*(l+2)),
-			wr => w_0_8_real,
-			wi => w_0_8_imag,
+			wr => w_0_8_real_12,
+			wi => w_0_8_imag_12,
 			S1r => out_3_r(4*(l+3)+l+2 downto 4*(l+3)),
 			S1i => out_3_i(4*(l+3)+l+2 downto 4*(l+3)),
 			S2r => out_3_r(5*(l+3)+l+2 downto 5*(l+3)),
@@ -315,8 +291,8 @@ begin
 			Ai => in_3_i(6*(l+2)+l+1 downto 6*(l+2)),
 			Br => in_3_r(7*(l+2)+l+1 downto 7*(l+2)),
 			Bi => in_3_i(7*(l+2)+l+1 downto 7*(l+2)),
-			wr => w_0_8_real,
-			wi => w_0_8_imag,
+			wr => w_0_8_real_12,
+			wi => w_0_8_imag_12,
 			S1r => out_3_r(6*(l+3)+l+2 downto 6*(l+3)),
 			S1i => out_3_i(6*(l+3)+l+2 downto 6*(l+3)),
 			S2r => out_3_r(7*(l+3)+l+2 downto 7*(l+3)),
