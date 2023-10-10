@@ -5,7 +5,7 @@ use ieee.math_real.all;
 use ieee.math_complex.all;
 
 package twiddle_factor is
-    constant factor_resize_multiplier : real := 2.0**(twiddle_factor_width-2);
+    -- constant factor_resize_multiplier : real := 2.0**(twiddle_factor_width-2);
 
     constant Pi : real := 3.14159265;
 
@@ -20,41 +20,41 @@ package twiddle_factor is
     constant w_3_8 : complex := EXP(exp_factor_3_8);
 
 	-- 10 bits wide
-    constant w_0_8_real_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_0_8.RE * 16), 10));
-    constant w_0_8_imag_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_0_8.IM * 16), 10));
+    constant w_0_8_real_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_0_8.RE * 16.0), 10));
+    constant w_0_8_imag_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_0_8.IM * 16.0), 10));
 
-    constant w_1_8_real_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_1_8.RE * 16), 10));
-    constant w_1_8_ima_10g : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_1_8.IM * 16), 10));
+    constant w_1_8_real_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_1_8.RE * 16.0), 10));
+    constant w_1_8_imag_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_1_8.IM * 16.0), 10));
 
-    constant w_2_8_rea_10l : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_2_8.RE * 16), 10));
-	constant w_2_8_imag_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_2_8.IM * 16), 10));
+    constant w_2_8_real_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_2_8.RE * 16.0), 10));
+	constant w_2_8_imag_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_2_8.IM * 16.0), 10));
 
-    constant w_3_8_real_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_3_8.RE * 16), 10));
-    constant w_3_8_imag_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_3_8.IM * 16), 10));
+    constant w_3_8_real_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_3_8.RE * 16.0), 10));
+    constant w_3_8_imag_10 : std_logic_vector(9 downto 0) := std_logic_vector(to_signed(integer(w_3_8.IM * 16.0), 10));
 
 	-- 11 bits wide
-    constant w_0_8_real_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_0_8.RE * 18), 11));
-    constant w_0_8_imag_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_0_8.IM * 18), 11));
+    constant w_0_8_real_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_0_8.RE * 18.0), 11));
+    constant w_0_8_imag_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_0_8.IM * 18.0), 11));
 
-    constant w_1_8_real_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_1_8.RE * 18), 11));
-    constant w_1_8_imag_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_1_8.IM * 18), 11));
+    constant w_1_8_real_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_1_8.RE * 18.0), 11));
+    constant w_1_8_imag_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_1_8.IM * 18.0), 11));
 
-    constant w_2_8_real_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_2_8.RE * 18), 11));
-    constant w_2_8_imag_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_2_8.IM * 18), 11));
+    constant w_2_8_real_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_2_8.RE * 18.0), 11));
+    constant w_2_8_imag_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_2_8.IM * 18.0), 11));
 
-    constant w_3_8_real_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_3_8.RE * 18), 11));
-    constant w_3_8_imag_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_3_8.IM * 18), 11));
+    constant w_3_8_real_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_3_8.RE * 18.0), 11));
+    constant w_3_8_imag_11 : std_logic_vector(10 downto 0) := std_logic_vector(to_signed(integer(w_3_8.IM * 18.0), 11));
 
 	-- 12 bits wide
-    constant w_0_8_real_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_0_8.RE * 20), 12));
-    constant w_0_8_imag_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_0_8.IM * 20), 12));
+    constant w_0_8_real_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_0_8.RE * 20.0), 12));
+    constant w_0_8_imag_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_0_8.IM * 20.0), 12));
 
-    constant w_1_8_real_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_1_8.RE * 20), 12));
-    constant w_1_8_imag_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_1_8.IM * 20), 12));
+    constant w_1_8_real_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_1_8.RE * 20.0), 12));
+    constant w_1_8_imag_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_1_8.IM * 20.0), 12));
 
-    constant w_2_8_real_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_2_8.RE * 20), 12));
-    constant w_2_8_imag_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_2_8.IM * 20), 12));
+    constant w_2_8_real_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_2_8.RE * 20.0), 12));
+    constant w_2_8_imag_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_2_8.IM * 20.0), 12));
 
-    constant w_3_8_real_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_3_8.RE * 20), 12));
-    constant w_3_8_imag_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_3_8.IM * 20), 12));
+    constant w_3_8_real_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_3_8.RE * 20.0), 12));
+    constant w_3_8_imag_12 : std_logic_vector(11 downto 0) := std_logic_vector(to_signed(integer(w_3_8.IM * 20.0), 12));
 end package;
