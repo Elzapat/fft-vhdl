@@ -13,7 +13,7 @@ entity top is
 		in_valid: in std_logic;
 		out_ready: in std_logic;
 		clk: in std_logic;
-		arst: in std_logic;
+		arst_n: in std_logic;
 		data_in_r: in std_logic_vector(8*l-1 downto 0);
 		data_in_i: in std_logic_vector(8*l-1 downto 0);
 		in_ready: out std_logic;
