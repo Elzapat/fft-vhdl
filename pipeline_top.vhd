@@ -21,8 +21,8 @@ entity top is
 		data_in_i: in std_logic_vector(8*l-1 downto 0);
 		in_ready: out std_logic;
 		out_valid: out std_logic;
-		data_out_r: out std_logic_vector(8*(l+2)-1 downto 0);
-		data_out_i: out std_logic_vector(8*(l+2)-1 downto 0)
+		data_out_r: out std_logic_vector(8*(l+3)-1 downto 0);
+		data_out_i: out std_logic_vector(8*(l+3)-1 downto 0)
 	);
 end entity;
 
