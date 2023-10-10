@@ -58,7 +58,7 @@ architecture pipeline of top is
 	end component;
 
 	-- w coefficient values computation
-    constant twiddle_factor_width : integer := 8; -- Taille totale de w
+    constant twiddle_factor_width : integer := 10; -- Taille totale de w
     constant factor_resize_multiplier : real := 2.0**(twiddle_factor_width-2);
 
     constant Pi : real := 3.14159265;
@@ -339,7 +339,7 @@ begin
 			out_3_i <= (others => '0');
 			data_out_r <= (others => '0');
 			data_out_i <= (others => '0');
-		else if rising_edge(clk) then
+		elsif rising_edge(clk) then
 			if en1 = '1' then
 				in_2_r <= out_1_r;
 				in_2_i <= out_1_i;
