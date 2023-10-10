@@ -24,6 +24,8 @@ begin
             if arst_n = '1' then
                 state <= "000";
             else
+                in_ready <= '1';
+
                 case state is
                     when "000" =>
                         if in_valid = '0' then
@@ -97,8 +99,12 @@ begin
                             state <= "111";
                         end if;
 
+                        in_ready <= out_ready;
+
                     when others =>
                 end case;
+
+                out_valid <= state(0);
 
                 en1 <= state(2);
                 en2 <= state(1);

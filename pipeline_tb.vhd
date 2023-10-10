@@ -28,12 +28,12 @@ architecture example_pipeline of pipeline_tb is
             data_in_i: in std_logic_vector(8*l-1 downto 0);
             in_ready: out std_logic;
             out_valid: out std_logic;
-            data_out_r: out std_logic_vector(8*(l+2)-1 downto 0);
-            data_out_i: out std_logic_vector(8*(l+2)-1 downto 0)
+            data_out_r: out std_logic_vector(8*(l+3)-1 downto 0);
+            data_out_i: out std_logic_vector(8*(l+3)-1 downto 0)
         );
     end component;
 
-    constant l: integer := 8;
+    constant l: integer := 12;
     constant n: integer := 3;
 
     signal arst_n : std_logic := '0';
@@ -48,8 +48,8 @@ architecture example_pipeline of pipeline_tb is
     signal data_in_r : std_logic_vector(8*l-1 downto 0);
     signal data_in_i : std_logic_vector(8*l-1 downto 0);
 
-    signal data_out_r : std_logic_vector(8*(l+2)-1 downto 0);
-    signal data_out_i : std_logic_vector(8*(l+2)-1 downto 0);
+    signal data_out_r : std_logic_vector(8*(l+3)-1 downto 0);
+    signal data_out_i : std_logic_vector(8*(l+3)-1 downto 0);
 begin
     pipeline : top
         generic map (
@@ -82,17 +82,20 @@ begin
         variable row : line;
         variable data_r, data_i : real;
         variable data_r_int, data_i_int : integer;
+        variable current_index : integer := 0;
     begin
+        in_valid <= '0';
+        current_index := 0;
         file_open(input_data, data_in_filename, read_mode);
 
         if endfile(input_data) then
-            report "Unexpected end of file" severity error;
+            report "Unexpected end of file" severity failure;
         end if;
 
-        while not endfile(input_data) loop
+        while not endfile(input_data) and current_index <= 8 loop
             wait until rising_edge(clk);
 
-            if in_valid = '1' and in_ready = '1' then
+            if in_ready = '1' then
                 readline(input_data, row);
 
                 read(row, data_r);
@@ -101,10 +104,14 @@ begin
                 data_r_int := integer(8.0 * data_r);
                 data_i_int := integer(8.0 * data_i);
 
-                data_in_r <= std_logic_vector(to_signed(data_r_int, 8));
-                data_in_i <= std_logic_vector(to_signed(data_i_int, 8));
+                data_in_r((current_index+1)*l-1 downto current_index*l) <= std_logic_vector(to_signed(data_r_int, l));
+                data_in_i((current_index+1)*l-1 downto current_index*l) <= std_logic_vector(to_signed(data_i_int, l));
+
+                current_index := current_index + 1;
             end if;
         end loop;
+
+        in_valid <= '1';
 
         file_close(input_data);
 
