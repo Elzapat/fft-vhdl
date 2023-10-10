@@ -14,12 +14,12 @@ entity top is
 		out_ready: in std_logic;
 		clk: in std_logic;
 		arst: in std_logic;
-		data_in_r: in array (0 to 7) of std_logic_vector(l-1 downto 0);
-		data_in_i: in array (0 to 7) of std_logic_vector(l-1 downto 0);
+		data_in_r: in std_logic_vector(8*l-1 downto 0);
+		data_in_i: in std_logic_vector(8*l-1 downto 0);
 		in_ready: out std_logic;
 		out_valid: out std_logic;
-		data_out_r: out array (0 to 7) of std_logic_vector(l+1 downto 0);
-		data_out_i: out array (0 to 7) of std_logic_vector(l+1 downto 0)
+		data_out_r: out std_logic_vector(8*(l+2)-1 downto 0);
+		data_out_i: out std_logic_vector(8*(l+2)-1 downto 0);
 	);
 end entity;
 
@@ -57,6 +57,7 @@ architecture pipeline of top is
 		);
 	end component;
 
+	-- w coefficient values computation
     constant twiddle_factor_width : integer := 8; -- Taille totale de w
     constant factor_resize_multiplier : real := 2.0**(twiddle_factor_width-2);
 
@@ -85,9 +86,9 @@ architecture pipeline of top is
     constant w_3_8_imag : std_logic_vector(twiddle_factor_width-1 downto 0) := std_logic_vector(to_signed(integer(w_3_8.IM * factor_resize_multiplier), twiddle_factor_width));
 
 	signal en1, en2, en3: std_logic;
-	signal out_1_r, out_1_i, in_2_r, in_2_i: array (0 to 7) of std_logic_vector(l-1 downto 0);
-	signal out_2_r, out_2_i, in_3_r, in_3_i: array (0 to 7) of std_logic_vector(l downto 0);
-	signal out_3_r, out_3_i: array (0 to 7) of std_logic_vector(l+1 downto 0);
+	signal out_1_r, out_1_i, in_2_r, in_2_i: std_logic_vector(8*l-1 downto 0);
+	signal out_2_r, out_2_i, in_3_r, in_3_i: std_logic_vector(8*(l+1)-1 downto 0);
+	signal out_3_r, out_3_i: std_logic_vector(8*(l+2)-1 downto 0);
 
 begin
 	control: fsm
@@ -103,22 +104,23 @@ begin
 			en3 => en3
 		);
 
+	-- Stage 1
 	B11: butterfly
 		generic map(
 			l => l,
 			n => n
 		)
 		port map(
-			Ar => data_in_r(0),
-			Ai => data_in_i(0),
-			Br => data_in_r(4),
-			Bi => data_in_i(4),
+			Ar => data_in_r(0*l+l-1 downto 0*l),
+			Ai => data_in_i(0*l+l-1 downto 0*l),
+			Br => data_in_r(4*l+l-1 downto 4*l),
+			Bi => data_in_i(4*l+l-1 downto 4*l),
 			wr => w_0_8_real,
 			wi => w_0_8_imag,
-			S1r => out_1_r(0),
-			S1i => out_1_i(0),
-			S2r => out_1_r(4),
-			S2i => out_1_i(4)
+			S1r => out_1_r(0*l+l-1 downto 0*l),
+			S1i => out_1_i(0*l+l-1 downto 0*l),
+			S2r => out_1_r(4*l+l-1 downto 4*l),
+			S2i => out_1_i(4*l+l-1 downto 4*l)
 		);
 
 	B12: butterfly
@@ -127,16 +129,16 @@ begin
 			n => n
 		)
 		port map(
-			Ar => data_in_r(1),
-			Ai => data_in_i(1),
-			Br => data_in_r(5),
-			Bi => data_in_i(5),
+			Ar => data_in_r(1*l+l-1 downto 1*l),
+			Ai => data_in_i(1*l+l-1 downto 1*l),
+			Br => data_in_r(5*l+l-1 downto 5*l),
+			Bi => data_in_i(5*l+l-1 downto 5*l),
 			wr => w_1_8_real,
 			wi => w_1_8_imag,
-			S1r => out_1_r(1),
-			S1i => out_1_i(1),
-			S2r => out_1_r(5),
-			S2i => out_1_i(5)
+			S1r => out_1_r(1*l+l-1 downto 1*l),
+			S1i => out_1_i(1*l+l-1 downto 1*l),
+			S2r => out_1_r(5*l+l-1 downto 5*l),
+			S2i => out_1_i(5*l+l-1 downto 5*l)
 		);
 
 	B13: butterfly
@@ -145,16 +147,16 @@ begin
 			n => n
 		)
 		port map(
-			Ar => data_in_r(2),
-			Ai => data_in_i(2),
-			Br => data_in_r(6),
-			Bi => data_in_i(6),
+			Ar => data_in_r(2*l+l-1 downto 2*l),
+			Ai => data_in_i(2*l+l-1 downto 2*l),
+			Br => data_in_r(6*l+l-1 downto 6*l),
+			Bi => data_in_i(6*l+l-1 downto 6*l),
 			wr => w_2_8_real,
 			wi => w_2_8_imag,
-			S1r => out_1_r(2),
-			S1i => out_1_i(2),
-			S2r => out_1_r(6),
-			S2i => out_1_i(6)
+			S1r => out_1_r(2*l+l-1 downto 2*l),
+			S1i => out_1_i(2*l+l-1 downto 2*l),
+			S2r => out_1_r(6*l+l-1 downto 6*l),
+			S2i => out_1_i(6*l+l-1 downto 6*l)
 		);
 
 	B14: butterfly
@@ -163,34 +165,35 @@ begin
 			n => n
 		)
 		port map(
-			Ar => data_in_r(3),
-			Ai => data_in_i(3),
-			Br => data_in_r(7),
-			Bi => data_in_i(7),
+			Ar => data_in_r(3*l+l-1 downto 3*l),
+			Ai => data_in_i(3*l+l-1 downto 3*l),
+			Br => data_in_r(7*l+l-1 downto 7*l),
+			Bi => data_in_i(7*l+l-1 downto 7*l),
 			wr => w_3_8_real,
 			wi => w_3_8_imag,
-			S1r => out_1_r(3),
-			S1i => out_1_i(3),
-			S2r => out_1_r(7),
-			S2i => out_1_i(7)
+			S1r => out_1_r(3*l+l-1 downto 3*l),
+			S1i => out_1_i(3*l+l-1 downto 3*l),
+			S2r => out_1_r(7*l+l-1 downto 7*l),
+			S2i => out_1_i(7*l+l-1 downto 7*l)
 		);
 
+	-- Stage 2
 	B21: butterfly
 		generic map(
 			l => l+1,
 			n => n
 		)
 		port map(
-			Ar => in_2_r(0),
-			Ai => in_2_i(0),
-			Br => in_2_r(2),
-			Bi => in_2_i(2),
+			Ar => in_2_r(0*(l+1)+l downto 0*(l+1)),
+			Ai => in_2_i(0*(l+1)+l downto 0*(l+1)),
+			Br => in_2_r(2*(l+1)+l downto 2*(l+1)),
+			Bi => in_2_i(2*(l+1)+l downto 2*(l+1)),
 			wr => w_0_8_real,
 			wi => w_0_8_imag,
-			S1r => out_2_r(0),
-			S1i => out_2_i(0),
-			S2r => out_2_r(2),
-			S2i => out_2_i(2)
+			S1r => out_2_r(0*(l+1)+l downto 0*(l+1)),
+			S1i => out_2_i(0*(l+1)+l downto 0*(l+1)),
+			S2r => out_2_r(2*(l+1)+l downto 2*(l+1)),
+			S2i => out_2_i(2*(l+1)+l downto 2*(l+1))
 		);
 
 	B22: butterfly
@@ -199,16 +202,16 @@ begin
 			n => n
 		)
 		port map(
-			Ar => in_2_r(1),
-			Ai => in_2_i(1),
-			Br => in_2_r(3),
-			Bi => in_2_i(3),
+			Ar => in_2_r(1*(l+1)+l downto 1*(l+1)),
+			Ai => in_2_i(1*(l+1)+l downto 1*(l+1)),
+			Br => in_2_r(3*(l+1)+l downto 3*(l+1)),
+			Bi => in_2_i(3*(l+1)+l downto 3*(l+1)),
 			wr => w_2_8_real,
 			wi => w_2_8_imag,
-			S1r => out_2_r(1),
-			S1i => out_2_i(1),
-			S2r => out_2_r(3),
-			S2i => out_2_i(3)
+			S1r => out_2_r(1*(l+1)+l downto 1*(l+1)),
+			S1i => out_2_i(1*(l+1)+l downto 1*(l+1)),
+			S2r => out_2_r(3*(l+1)+l downto 3*(l+1)),
+			S2i => out_2_i(3*(l+1)+l downto 3*(l+1))
 		);
 
 	B23: butterfly
@@ -217,16 +220,16 @@ begin
 			n => n
 		)
 		port map(
-			Ar => in_2_r(4),
-			Ai => in_2_i(4),
-			Br => in_2_r(6),
-			Bi => in_2_i(6),
+			Ar => in_2_r(4*(l+1)+l downto 4*(l+1)),
+			Ai => in_2_i(4*(l+1)+l downto 4*(l+1)),
+			Br => in_2_r(6*(l+1)+l downto 6*(l+1)),
+			Bi => in_2_i(6*(l+1)+l downto 6*(l+1)),
 			wr => w_0_8_real,
 			wi => w_0_8_imag,
-			S1r => out_2_r(4),
-			S1i => out_2_i(4),
-			S2r => out_2_r(6),
-			S2i => out_2_i(6)
+			S1r => out_2_r(4*(l+1)+l downto 4*(l+1)),
+			S1i => out_2_i(4*(l+1)+l downto 4*(l+1)),
+			S2r => out_2_r(6*(l+1)+l downto 6*(l+1)),
+			S2i => out_2_i(6*(l+1)+l downto 6*(l+1))
 		);
 
 	B24: butterfly
@@ -235,34 +238,35 @@ begin
 			n => n
 		)
 		port map(
-			Ar => in_2_r(5),
-			Ai => in_2_i(5),
-			Br => in_2_r(7),
-			Bi => in_2_i(7),
+			Ar => in_2_r(5*(l+1)+l downto 5*(l+1)),
+			Ai => in_2_i(5*(l+1)+l downto 5*(l+1)),
+			Br => in_2_r(7*(l+1)+l downto 7*(l+1)),
+			Bi => in_2_i(7*(l+1)+l downto 7*(l+1)),
 			wr => w_2_8_real,
 			wi => w_2_8_imag,
-			S1r => out_2_r(5),
-			S1i => out_2_i(5),
-			S2r => out_2_r(7),
-			S2i => out_2_i(7)
+			S1r => out_2_r(5*(l+1)+l downto 5*(l+1)),
+			S1i => out_2_i(5*(l+1)+l downto 5*(l+1)),
+			S2r => out_2_r(7*(l+1)+l downto 7*(l+1)),
+			S2i => out_2_i(7*(l+1)+l downto 7*(l+1))
 		);
 
+	-- Stage 3
 	B31: butterfly
 		generic map(
 			l => l+2,
 			n => n
 		)
 		port map(
-			Ar => in_3_r(0),
-			Ai => in_3_i(0),
-			Br => in_3_r(1),
-			Bi => in_3_i(1),
+			Ar => in_3_r(0*(l+2)+l+1 downto 0*(l+2)),
+			Ai => in_3_i(0*(l+2)+l+1 downto 0*(l+2)),
+			Br => in_3_r(1*(l+2)+l+1 downto 1*(l+2)),
+			Bi => in_3_i(1*(l+2)+l+1 downto 1*(l+2)),
 			wr => w_0_8_real,
 			wi => w_0_8_imag,
-			S1r => out_3_r(0),
-			S1i => out_3_i(0),
-			S2r => out_3_r(1),
-			S2i => out_3_i(1)
+			S1r => out_3_r(0*(l+2)+l+1 downto 0*(l+2)),
+			S1i => out_3_i(0*(l+2)+l+1 downto 0*(l+2)),
+			S2r => out_3_r(1*(l+2)+l+1 downto 1*(l+2)),
+			S2i => out_3_i(1*(l+2)+l+1 downto 1*(l+2))
 		);
 
 	B32: butterfly
@@ -271,16 +275,16 @@ begin
 			n => n
 		)
 		port map(
-			Ar => in_3_r(2),
-			Ai => in_3_i(2),
-			Br => in_3_r(3),
-			Bi => in_3_i(3),
+			Ar => in_3_r(2*(l+2)+l+1 downto 2*(l+2)),
+			Ai => in_3_i(2*(l+2)+l+1 downto 2*(l+2)),
+			Br => in_3_r(3*(l+2)+l+1 downto 3*(l+2)),
+			Bi => in_3_i(3*(l+2)+l+1 downto 3*(l+2)),
 			wr => w_0_8_real,
 			wi => w_0_8_imag,
-			S1r => out_3_r(2),
-			S1i => out_3_i(2),
-			S2r => out_3_r(3),
-			S2i => out_3_i(3)
+			S1r => out_3_r(2*(l+2)+l+1 downto 2*(l+2)),
+			S1i => out_3_i(2*(l+2)+l+1 downto 2*(l+2)),
+			S2r => out_3_r(3*(l+2)+l+1 downto 3*(l+2)),
+			S2i => out_3_i(3*(l+2)+l+1 downto 3*(l+2))
 		);
 
 	B33: butterfly
@@ -289,16 +293,16 @@ begin
 			n => n
 		)
 		port map(
-			Ar => in_3_r(4),
-			Ai => in_3_i(4),
-			Br => in_3_r(5),
-			Bi => in_3_i(5),
+			Ar => in_3_r(4*(l+2)+l+1 downto 4*(l+2)),
+			Ai => in_3_i(4*(l+2)+l+1 downto 4*(l+2)),
+			Br => in_3_r(5*(l+2)+l+1 downto 5*(l+2)),
+			Bi => in_3_i(5*(l+2)+l+1 downto 5*(l+2)),
 			wr => w_0_8_real,
 			wi => w_0_8_imag,
-			S1r => out_3_r(4),
-			S1i => out_3_i(4),
-			S2r => out_3_r(5),
-			S2i => out_3_i(5)
+			S1r => out_3_r(4*(l+2)+l+1 downto 4*(l+2)),
+			S1i => out_3_i(4*(l+2)+l+1 downto 4*(l+2)),
+			S2r => out_3_r(5*(l+2)+l+1 downto 5*(l+2)),
+			S2i => out_3_i(5*(l+2)+l+1 downto 5*(l+2))
 		);
 
 	B34: butterfly
@@ -307,33 +311,34 @@ begin
 			n => n
 		)
 		port map(
-			Ar => in_3_r(6),
-			Ai => in_3_i(6),
-			Br => in_3_r(7),
-			Bi => in_3_i(7),
+			Ar => in_3_r(6*(l+2)+l+1 downto 6*(l+2)),
+			Ai => in_3_i(6*(l+2)+l+1 downto 6*(l+2)),
+			Br => in_3_r(7*(l+2)+l+1 downto 7*(l+2)),
+			Bi => in_3_i(7*(l+2)+l+1 downto 7*(l+2)),
 			wr => w_0_8_real,
 			wi => w_0_8_imag,
-			S1r => out_3_r(6),
-			S1i => out_3_i(6),
-			S2r => out_3_r(7),
-			S2i => out_3_i(7)
+			S1r => out_3_r(6*(l+2)+l+1 downto 6*(l+2)),
+			S1i => out_3_i(6*(l+2)+l+1 downto 6*(l+2)),
+			S2r => out_3_r(7*(l+2)+l+1 downto 7*(l+2)),
+			S2i => out_3_i(7*(l+2)+l+1 downto 7*(l+2))
 		);
 
+	-- Inter-stage registers
 	process(arst_n, clk)
 	begin
 		if arst_n = '0' then
-			out_1_r <= (others => (others => '0'));
-			out_1_i <= (others => (others => '0'));
-			in_2_r <= (others => (others => '0'));
-			in_2_i <= (others => (others => '0'));
-			out_2_r <= (others => (others => '0'));
-			out_2_i <= (others => (others => '0'));
-			in_3_r <= (others => (others => '0'));
-			in_3_i <= (others => (others => '0'));
-			out_3_r <= (others => (others => '0'));
-			out_3_i <= (others => (others => '0'));
-			data_out_r <= (others => (others => '0'));
-			data_out_i <= (others => (others => '0'));
+			out_1_r <= (others => '0');
+			out_1_i <= (others => '0');
+			in_2_r <= (others => '0');
+			in_2_i <= (others => '0');
+			out_2_r <= (others => '0');
+			out_2_i <= (others => '0');
+			in_3_r <= (others => '0');
+			in_3_i <= (others => '0');
+			out_3_r <= (others => '0');
+			out_3_i <= (others => '0');
+			data_out_r <= (others => '0');
+			data_out_i <= (others => '0');
 		else if rising_edge(clk) then
 			if en1 = '1' then
 				in_2_r <= out_1_r;
@@ -344,22 +349,22 @@ begin
 				in_3_i <= out_2_i;
 			end if;
 			if en3 = '1' then
-				data_out_r(0) <= out_3_r(0);
-				data_out_i(0) <= out_3_i(0);
-				data_out_r(4) <= out_3_r(1);
-				data_out_i(4) <= out_3_i(1);
-				data_out_r(2) <= out_3_r(2);
-				data_out_i(2) <= out_3_i(2);
-				data_out_r(6) <= out_3_r(3);
-				data_out_i(6) <= out_3_i(3);
-				data_out_r(1) <= out_3_r(4);
-				data_out_i(1) <= out_3_i(4);
-				data_out_r(5) <= out_3_r(5);
-				data_out_i(5) <= out_3_i(5);
-				data_out_r(3) <= out_3_r(6);
-				data_out_i(3) <= out_3_i(6);
-				data_out_r(7) <= out_3_r(7);
-				data_out_i(7) <= out_3_i(7);
+				data_out_r(0*(l+2)+l+1 downto 0*(l+2)) <= out_3_r(0*(l+2)+l+1 downto 0*(l+1));
+				data_out_i(0*(l+2)+l+1 downto 0*(l+2)) <= out_3_i(0*(l+2)+l+1 downto 0*(l+1));
+				data_out_r(4*(l+2)+l+1 downto 4*(l+2)) <= out_3_r(1*(l+2)+l+1 downto 1*(l+1));
+				data_out_i(4*(l+2)+l+1 downto 4*(l+2)) <= out_3_i(1*(l+2)+l+1 downto 1*(l+1));
+				data_out_r(2*(l+2)+l+1 downto 2*(l+2)) <= out_3_r(2*(l+2)+l+1 downto 2*(l+1));
+				data_out_i(2*(l+2)+l+1 downto 2*(l+2)) <= out_3_i(2*(l+2)+l+1 downto 2*(l+1));
+				data_out_r(6*(l+2)+l+1 downto 6*(l+2)) <= out_3_r(3*(l+2)+l+1 downto 3*(l+1));
+				data_out_i(6*(l+2)+l+1 downto 6*(l+2)) <= out_3_i(3*(l+2)+l+1 downto 3*(l+1));
+				data_out_r(1*(l+2)+l+1 downto 1*(l+2)) <= out_3_r(4*(l+2)+l+1 downto 4*(l+1));
+				data_out_i(1*(l+2)+l+1 downto 1*(l+2)) <= out_3_i(4*(l+2)+l+1 downto 4*(l+1));
+				data_out_r(5*(l+2)+l+1 downto 5*(l+2)) <= out_3_r(5*(l+2)+l+1 downto 5*(l+1));
+				data_out_i(5*(l+2)+l+1 downto 5*(l+2)) <= out_3_i(5*(l+2)+l+1 downto 5*(l+1));
+				data_out_r(3*(l+2)+l+1 downto 3*(l+2)) <= out_3_r(6*(l+2)+l+1 downto 6*(l+1));
+				data_out_i(3*(l+2)+l+1 downto 3*(l+2)) <= out_3_i(6*(l+2)+l+1 downto 6*(l+1));
+				data_out_r(7*(l+2)+l+1 downto 7*(l+2)) <= out_3_r(7*(l+2)+l+1 downto 7*(l+1));
+				data_out_i(7*(l+2)+l+1 downto 7*(l+2)) <= out_3_i(7*(l+2)+l+1 downto 7*(l+1));
 			end if;
 		end if;
 	end process;
