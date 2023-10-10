@@ -62,9 +62,9 @@ architecture pipeline of top is
 
 	-- Internal signals
 	signal en1, en2, en3: std_logic;
-	signal out_1_r, out_1_i, in_2_r, in_2_i: std_logic_vector(8*l-1 downto 0);
-	signal out_2_r, out_2_i, in_3_r, in_3_i: std_logic_vector(8*(l+1)-1 downto 0);
-	signal out_3_r, out_3_i: std_logic_vector(8*(l+2)-1 downto 0);
+	signal out_1_r, out_1_i, in_2_r, in_2_i: std_logic_vector(8*(l+1)-1 downto 0);
+	signal out_2_r, out_2_i, in_3_r, in_3_i: std_logic_vector(8*(l+2)-1 downto 0);
+	signal out_3_r, out_3_i: std_logic_vector(8*(l+3)-1 downto 0);
 
 begin
 	control: fsm
