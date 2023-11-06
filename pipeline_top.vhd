@@ -330,22 +330,6 @@ begin
 	process(arst_n, clk)
 	begin
 		if arst_n = '0' then
-			out_10_r <= (others => '0');
-			out_11_r <= (others => '0');
-			out_12_r <= (others => '0');
-			out_13_r <= (others => '0');
-			out_14_r <= (others => '0');
-			out_15_r <= (others => '0');
-			out_16_r <= (others => '0');
-			out_17_r <= (others => '0');
-			out_10_i <= (others => '0');
-			out_11_i <= (others => '0');
-			out_12_i <= (others => '0');
-			out_13_i <= (others => '0');
-			out_14_i <= (others => '0');
-			out_15_i <= (others => '0');
-			out_16_i <= (others => '0');
-			out_17_i <= (others => '0');
 			in_20_r <= (others => '0');
 			in_21_r <= (others => '0');
 			in_22_r <= (others => '0');
@@ -362,22 +346,6 @@ begin
 			in_25_i <= (others => '0');
 			in_26_i <= (others => '0');
 			in_27_i <= (others => '0');
-			out_20_r <= (others => '0');
-			out_21_r <= (others => '0');
-			out_22_r <= (others => '0');
-			out_23_r <= (others => '0');
-			out_24_r <= (others => '0');
-			out_25_r <= (others => '0');
-			out_26_r <= (others => '0');
-			out_27_r <= (others => '0');
-			out_20_i <= (others => '0');
-			out_21_i <= (others => '0');
-			out_22_i <= (others => '0');
-			out_23_i <= (others => '0');
-			out_24_i <= (others => '0');
-			out_25_i <= (others => '0');
-			out_26_i <= (others => '0');
-			out_27_i <= (others => '0');
 			in_30_r <= (others => '0');
 			in_31_r <= (others => '0');
 			in_32_r <= (others => '0');
@@ -394,22 +362,6 @@ begin
 			in_35_i <= (others => '0');
 			in_36_i <= (others => '0');
 			in_37_i <= (others => '0');
-			out_30_r <= (others => '0');
-			out_31_r <= (others => '0');
-			out_32_r <= (others => '0');
-			out_33_r <= (others => '0');
-			out_34_r <= (others => '0');
-			out_35_r <= (others => '0');
-			out_36_r <= (others => '0');
-			out_37_r <= (others => '0');
-			out_30_i <= (others => '0');
-			out_31_i <= (others => '0');
-			out_32_i <= (others => '0');
-			out_33_i <= (others => '0');
-			out_34_i <= (others => '0');
-			out_35_i <= (others => '0');
-			out_36_i <= (others => '0');
-			out_37_i <= (others => '0');
 			data_out_r <= (others => '0');
 			data_out_i <= (others => '0');
 		elsif rising_edge(clk) then
