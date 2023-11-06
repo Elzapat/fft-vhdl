@@ -124,7 +124,7 @@ begin
 
         file_close(input_data);
 
-        report "end of input file" severity error;
+        report "end of input file" severity warning;
     end process;
 
     -- data out
@@ -155,14 +155,14 @@ begin
     begin
         wait for 100 ns;
 
-        wait until rising_edge(clk);
-        wait for 3ns;
+        --wait until rising_edge(clk);
+        --wait for 3ns;
 
         in_valid <= '1';
 
-        wait until rising_edge(clk);
-        wait for 3ns;
+        --wait until rising_edge(clk);
+        --wait for 3ns;
 
-        in_valid <= '0';
+        --in_valid <= '0';
     end process;
 end architecture;
