@@ -11,7 +11,7 @@ end entity;
 architecture example_pipeline of pipeline_tb is
     constant clk_period : time := 10 ns;
 
-    constant data_in_filename : string := "data.in";
+    constant data_in_filename : string := "data1.in";
     constant data_out_filename : string := "data.out";
 
     component top is
@@ -50,6 +50,8 @@ architecture example_pipeline of pipeline_tb is
 
     signal data_out_r : std_logic_vector(8*(l+3)-1 downto 0);
     signal data_out_i : std_logic_vector(8*(l+3)-1 downto 0);
+
+    signal s_current_index : std_logic_vector(8 downto 0);
 begin
     pipeline : top
         generic map (
@@ -84,7 +86,7 @@ begin
         variable data_r_int, data_i_int : integer;
         variable current_index : integer := 0;
     begin
-        in_valid <= '0';
+        -- in_valid <= '0';
         current_index := 0;
         file_open(input_data, data_in_filename, read_mode);
 
@@ -94,28 +96,35 @@ begin
 
         while not endfile(input_data) and current_index <= 8 loop
             wait until rising_edge(clk);
+            -- s_current_index <= std_logic_vector(current_index);
 
-            if in_ready = '1' then
-                readline(input_data, row);
+            if not endfile(input_data) then
+                if in_ready = '1' and in_valid = '1' then
+                    if endfile(input_data) then
+                        report "Unexpected end of file" severity error;
+                    else
+                        readline(input_data, row);
 
-                read(row, data_r);
-                read(row, data_i);
+                        read(row, data_r);
+                        read(row, data_i);
 
-                data_r_int := integer(8.0 * data_r);
-                data_i_int := integer(8.0 * data_i);
+                        data_r_int := integer(8.0 * data_r);
+                        data_i_int := integer(8.0 * data_i);
 
-                data_in_r((current_index+1)*l-1 downto current_index*l) <= std_logic_vector(to_signed(data_r_int, l));
-                data_in_i((current_index+1)*l-1 downto current_index*l) <= std_logic_vector(to_signed(data_i_int, l));
+                        data_in_r((current_index+1)*l-1 downto current_index*l) <= std_logic_vector(to_signed(data_r_int, l));
+                        data_in_i((current_index+1)*l-1 downto current_index*l) <= std_logic_vector(to_signed(data_i_int, l));
 
-                current_index := current_index + 1;
+                        current_index := current_index + 1;
+                    end if;
+                end if;
             end if;
         end loop;
 
-        in_valid <= '1';
+        -- in_valid <= '1';
 
         file_close(input_data);
 
-        report "end of input file" severity failure;
+        report "end of input file" severity error;
     end process;
 
     -- data out
@@ -144,7 +153,7 @@ begin
 
     process
     begin
-        wait for 10 ns;
+        wait for 100 ns;
 
         wait until rising_edge(clk);
         wait for 3ns;
