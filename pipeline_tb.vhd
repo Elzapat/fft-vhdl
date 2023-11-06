@@ -11,7 +11,7 @@ end entity;
 architecture example_pipeline of pipeline_tb is
     constant clk_period : time := 10 ns;
 
-    constant data_in_filename : string := "data1.in";
+    constant data_in_filename : string := "data.in";
     constant data_out_filename : string := "data.out";
 
     component top is
@@ -36,7 +36,7 @@ architecture example_pipeline of pipeline_tb is
     constant l: integer := 12;
     constant n: integer := 3;
 
-    signal arst_n : std_logic := '0';
+    signal arst_n : std_logic := '1';
     signal clk : std_logic := '0';
 
     signal in_valid : std_logic := '0';
@@ -94,7 +94,7 @@ begin
             report "Unexpected end of file" severity failure;
         end if;
 
-        while not endfile(input_data) and current_index <= 8 loop
+        while not endfile(input_data) loop
             wait until rising_edge(clk);
             -- s_current_index <= std_logic_vector(current_index);
 
@@ -114,7 +114,7 @@ begin
                         data_in_r((current_index+1)*l-1 downto current_index*l) <= std_logic_vector(to_signed(data_r_int, l));
                         data_in_i((current_index+1)*l-1 downto current_index*l) <= std_logic_vector(to_signed(data_i_int, l));
 
-                        current_index := current_index + 1;
+                        current_index := (current_index + 1) mod 8;
                     end if;
                 end if;
             end if;
@@ -124,7 +124,9 @@ begin
 
         file_close(input_data);
 
-        report "end of input file" severity warning;
+        wait for 50ns;
+
+        report "end of input file" severity failure;
     end process;
 
     -- data out

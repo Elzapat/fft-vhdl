@@ -21,7 +21,7 @@ begin
     process(clk, arst_n)
     begin
         if rising_edge(clk) then
-            if arst_n = '1' then
+            if arst_n = '0' then
                 state <= "000";
             else
                 in_ready <= '1';
