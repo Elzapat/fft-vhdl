@@ -17,12 +17,12 @@ entity top is
 		out_ready: in std_logic;
 		clk: in std_logic;
 		arst_n: in std_logic;
-		data_in_r: in std_logic_vector(l-1 downto 0);
-		data_in_i: in std_logic_vector(l-1 downto 0);
+		data_in_r: in std_logic_vector(8*l-1 downto 0);
+		data_in_i: in std_logic_vector(8*l-1 downto 0);
 		in_ready: out std_logic;
 		out_valid: out std_logic;
-		data_out_r: out std_logic_vector(l+2 downto 0);
-		data_out_i: out std_logic_vector(l+2 downto 0)
+		data_out_r: out std_logic_vector(8*(l+3)-1 downto 0);
+		data_out_i: out std_logic_vector(8*(l+3)-1 downto 0)
 	);
 end entity;
 
@@ -114,10 +114,10 @@ begin
 			n => n
 		)
 		port map(
-			Ar => data_in_r,
-			Ai => data_in_i,
-			Br => data_in_r,
-			Bi => data_in_i,
+			Ar => data_in_r(0*l+l-1 downto 0*l),
+			Ai => data_in_i(0*l+l-1 downto 0*l),
+			Br => data_in_r(4*l+l-1 downto 4*l),
+			Bi => data_in_i(4*l+l-1 downto 4*l),
 			wr => w_0_8_real_14,
 			wi => w_0_8_imag_14,
 			S1r => out_10_r,
@@ -132,10 +132,10 @@ begin
 			n => n
 		)
 		port map(
-			Ar => data_in_r,
-			Ai => data_in_i,
-			Br => data_in_r,
-			Bi => data_in_i,
+			Ar => data_in_r(1*l+l-1 downto 1*l),
+			Ai => data_in_i(1*l+l-1 downto 1*l),
+			Br => data_in_r(5*l+l-1 downto 5*l),
+			Bi => data_in_i(5*l+l-1 downto 5*l),
 			wr => w_1_8_real_14,
 			wi => w_1_8_imag_14,
 			S1r => out_11_r,
@@ -150,10 +150,10 @@ begin
 			n => n
 		)
 		port map(
-			Ar => data_in_r,
-			Ai => data_in_i,
-			Br => data_in_r,
-			Bi => data_in_i,
+			Ar => data_in_r(2*l+l-1 downto 2*l),
+			Ai => data_in_i(2*l+l-1 downto 2*l),
+			Br => data_in_r(6*l+l-1 downto 6*l),
+			Bi => data_in_i(6*l+l-1 downto 6*l),
 			wr => w_2_8_real_14,
 			wi => w_2_8_imag_14,
 			S1r => out_12_r,
@@ -168,10 +168,10 @@ begin
 			n => n
 		)
 		port map(
-			Ar => data_in_r,
-			Ai => data_in_i,
-			Br => data_in_r,
-			Bi => data_in_i,
+			Ar => data_in_r(3*l+l-1 downto 3*l),
+			Ai => data_in_i(3*l+l-1 downto 3*l),
+			Br => data_in_r(7*l+l-1 downto 7*l),
+			Bi => data_in_i(7*l+l-1 downto 7*l),
 			wr => w_3_8_real_14,
 			wi => w_3_8_imag_14,
 			S1r => out_13_r,
@@ -450,30 +450,22 @@ begin
 				in_37_i <= out_27_i;
 			end if;
 			if en3 = '1' then
-				data_out_r <= out_30_r;
-				data_out_i <= out_30_i;
-				wait for 10 ns;
-				data_out_r <= out_34_r;
-				data_out_i <= out_34_i;
-				wait for 10 ns;
-				data_out_r <= out_32_r;
-				data_out_i <= out_32_i;
-				wait for 10 ns;
-				data_out_r <= out_36_r;
-				data_out_i <= out_36_i;
-				wait for 10 ns;
-				data_out_r <= out_31_r;
-				data_out_i <= out_31_i;
-				wait for 10 ns;
-				data_out_r <= out_35_r;
-				data_out_i <= out_35_i;
-				wait for 10 ns;
-				data_out_r <= out_33_r;
-				data_out_i <= out_33_i;
-				wait for 10 ns;
-				data_out_r <= out_37_r;
-				data_out_i <= out_37_i;
-				wait for 10 ns;
+				data_out_r(0*(l+3)+l+2 downto 0*(l+3)) <= out_30_r;
+				data_out_i(0*(l+3)+l+2 downto 0*(l+3)) <= out_30_i;
+				data_out_r(4*(l+3)+l+2 downto 4*(l+3)) <= out_31_r;
+				data_out_i(4*(l+3)+l+2 downto 4*(l+3)) <= out_31_i;
+				data_out_r(2*(l+3)+l+2 downto 2*(l+3)) <= out_32_r;
+				data_out_i(2*(l+3)+l+2 downto 2*(l+3)) <= out_32_i;
+				data_out_r(6*(l+3)+l+2 downto 6*(l+3)) <= out_33_r;
+				data_out_i(6*(l+3)+l+2 downto 6*(l+3)) <= out_33_i;
+				data_out_r(1*(l+3)+l+2 downto 1*(l+3)) <= out_34_r;
+				data_out_i(1*(l+3)+l+2 downto 1*(l+3)) <= out_34_i;
+				data_out_r(5*(l+3)+l+2 downto 5*(l+3)) <= out_35_r;
+				data_out_i(5*(l+3)+l+2 downto 5*(l+3)) <= out_35_i;
+				data_out_r(3*(l+3)+l+2 downto 3*(l+3)) <= out_36_r;
+				data_out_i(3*(l+3)+l+2 downto 3*(l+3)) <= out_36_i;
+				data_out_r(7*(l+3)+l+2 downto 7*(l+3)) <= out_37_r;
+				data_out_i(7*(l+3)+l+2 downto 7*(l+3)) <= out_37_i;
 			end if;
 		end if;
 	end process;
