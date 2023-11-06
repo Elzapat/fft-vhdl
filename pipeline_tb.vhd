@@ -135,17 +135,22 @@ begin
         variable row : line;
         variable data_r : real;
         variable data_i : real;
+        variable current_index : integer := 0;
     begin
         wait for 1 ns;
 
         if out_valid = '1' and out_ready = '1' then
-            data_r := real(to_integer(signed(data_out_r))) / 8.0;
-            data_i := real(to_integer(signed(data_out_i))) / 8.0;
+			current_index := 0;
+			while current_index < 8 loop
+				data_r := real(to_integer(signed(data_out_r(current_index -- TODO -- )))) / 8.0;
+				data_i := real(to_integer(signed(data_out_i(current_index -- TODO -- )))) / 8.0;
 
-            write(row, data_r);
-            write(row, ' ');
-            write(row, data_i);
-            writeline(output_data, row);
+				write(row, data_r);
+				write(row, ' ');
+				write(row, data_i);
+				writeline(output_data, row);
+				current_index := current_index + 1;
+			end loop;
         end if;
 
         wait until rising_edge(clk);
