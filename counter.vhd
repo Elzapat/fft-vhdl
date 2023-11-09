@@ -13,12 +13,12 @@ entity counter is
 end entity;
 
 architecture count of counter is
-    variable counter: integer := 0;
+    signal counter: integer := 0;
 begin
     process(clk, arst_n)
     begin
         if arst_n = '0' then
-            counter <= '0';
+            counter <= 0;
         elsif rising_edge(clk) then
             if rst_cpt = '1' then
                 counter <= 0;
