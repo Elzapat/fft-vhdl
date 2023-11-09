@@ -8,7 +8,7 @@ entity counter is
         inc_cpt: in std_logic;
         rst_cpt: in std_logic;
         clk: in std_logic;
-        cpt: out integer
+        cpt: out integer range 0 to 25
     );
 end entity;
 

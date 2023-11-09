@@ -27,7 +27,7 @@ entity pipeline_top is
 end entity;
 
 architecture pipeline of pipeline_top is
-	component fsm is
+	component pipeline_fsm is
 		port(
 			arst_n: in std_logic;
 			clk: in std_logic;
