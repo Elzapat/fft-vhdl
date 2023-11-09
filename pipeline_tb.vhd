@@ -142,8 +142,8 @@ begin
         if out_valid = '1' and out_ready = '1' then
 			current_index := 0;
 			while current_index < 8 loop
-				data_r := real(to_integer(signed(data_out_r(current_index -- TODO -- )))) / 8.0;
-				data_i := real(to_integer(signed(data_out_i(current_index -- TODO -- )))) / 8.0;
+				data_r := real(to_integer(signed(data_out_r((current_index+1)*(l+3)-1 downto current_index*(l+3))))) / 8.0;
+				data_i := real(to_integer(signed(data_out_i((current_index+1)*(l+3)-1 downto current_index*(l+3))))) / 8.0;
 
 				write(row, data_r);
 				write(row, ' ');

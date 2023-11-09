@@ -1,6 +1,18 @@
 ---
+<<<<<<< Updated upstream
 geometry: "margin=3cm"
 ---
+=======
+header-includes:
+	- \usepackage{multicol}
+	- \newcommand{\hideFromPandoc}[1]{#1}
+	- '\hideFromPandoc{
+		\def\beginmini{\begin{minipage}[t]}
+		\def\endmini{\end{minipage}}
+	  }'
+...
+
+>>>>>>> Stashed changes
 ## 2.1
 
 $\text{A et B au format (1;l;n)}$
@@ -161,6 +173,7 @@ graph LR
 | E111         | `out_ready`  | 1            | `out_ready`  | `out_ready`  | `out_ready`  |
 +--------------+--------------+--------------+--------------+--------------+--------------+
 
+<<<<<<< Updated upstream
 ## Approche itérative
 
 ### Réception
@@ -271,3 +284,82 @@ graph LR
 - `sel_butterfly_output`: dépend qe de cpt
 - k
 - `w_addr` et `r_addr`: dependent de `cpt` et de l'état présent
+=======
+# Architecture itérative
+
+3 phases :
+* Réception
+* Calcul
+* Transmission
+
+Tout mettre sur 15 bits (rajouter 3 fois le bit de signe à l'entrée)
+
+## Adresses RAM
+
+\beginmini{0.3\textwidth}
+
+### Réception
+
+ R | W
+:-:|:-:
+ X | 0
+ X | 1
+ X | 2
+ X | 3
+ X | 4
+ X | 5
+ X | 6
+ X | 7
+
+\endmini
+\beginmini{0.3\textwidth}
+
+### Calcul
+
+ R | W
+:-:|:-:
+ 0 | X
+ 4 | X
+ 1 | 0
+ 5 | 4
+ 2 | 1
+ 6 | 5
+ 3 | 2
+ 7 | 6
+ 0 | 3
+ 2 | 7
+ 1 | 0
+ 3 | 2
+ 4 | 1
+ 6 | 3
+ 5 | 4
+ 7 | 6
+ 0 | 5
+ 1 | 7
+ 2 | 0
+ 3 | 1
+ 4 | 2
+ 5 | 3
+ 6 | 4
+ 7 | 5
+ X | 6
+ X | 7
+
+\endmini
+\beginmini{0.3\textwidth}
+
+### Transmission
+
+ R | W
+:-:|:-:
+ 0 | X
+ 4 | X
+ 2 | X
+ 6 | X
+ 1 | X
+ 5 | X
+ 3 | X
+ 7 | X
+
+\endmini
+>>>>>>> Stashed changes
