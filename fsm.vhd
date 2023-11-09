@@ -116,7 +116,6 @@ begin
                 -- en2 <= out_ready when state(1) = '1' and state(0) = '1' else '1';
                 -- en3 <= out_ready when state(0) = '1' else '1';
 
-
                 if state(1) = '1' and state(0) = '1' then
                     en2 <= out_ready;
                 else

@@ -14,7 +14,7 @@ architecture example_pipeline of pipeline_tb is
     constant data_in_filename : string := "data.in";
     constant data_out_filename : string := "data.out";
 
-    component top is
+    component pipeline_top is
         generic(
             l: integer; -- Data size
             n: integer -- Bits after the decimal point
@@ -53,7 +53,7 @@ architecture example_pipeline of pipeline_tb is
 
     signal s_current_index : std_logic_vector(8 downto 0);
 begin
-    pipeline : top
+    pipeline : pipeline_top
         generic map (
             l => l,
             n => n

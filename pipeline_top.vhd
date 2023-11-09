@@ -7,7 +7,7 @@ use ieee.math_complex.all;
 library work;
 use work.twiddle_factor.all;
 
-entity top is
+entity pipeline_top is
 	generic(
 		l: integer; -- Data size
 		n: integer -- Bits after the decimal point
@@ -26,7 +26,7 @@ entity top is
 	);
 end entity;
 
-architecture pipeline of top is
+architecture pipeline of pipeline_top is
 	component fsm is
 		port(
 			arst_n: in std_logic;
