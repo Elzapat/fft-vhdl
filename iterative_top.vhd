@@ -2,6 +2,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library work;
+use work.twiddle_factor.all;
+
 entity iterative_top is
 	generic(
 		l: integer; -- Data size
@@ -87,8 +90,20 @@ architecture top of iterative_top is
     signal k: natural range 0 to 3;
 
     -- Butterfly input delay
-    signal butterfly_input_r: std_logic_vector(12 downto 0);
-    signal butterfly_input_i: std_logic_vector(12 downto 0);
+    signal butterfly_input_r: std_logic_vector(l downto 0);
+    signal butterfly_input_i: std_logic_vector(l downto 0);
+
+    signal butterfly_output_r: std_logic_vector(l downto 0);
+    signal butterfly_output_i: std_logic_vector(l downto 0);
+
+    signal data_in_ext_r: std_logic_vector(l downto 0);
+    signal data_in_ext_i: std_logic_vector(l downto 0);
+
+    signal data_in_ram_r: std_logic_vector(l downto 0);
+    signal data_in_ram_i: std_logic_vector(l downto 0);
+
+    signal data_out_ram_r: std_logic_vector(l downto 0);
+    signal data_out_ram_i: std_logic_vector(l downto 0);
 begin
     butterfly_inst : butterfly
         generic map (
@@ -133,12 +148,12 @@ begin
             clk => clk,
             addr_a => w_addr,
             addr_b => r_addr,
-            data_a => data_in_r,
+            data_a => data_in_ram_i,
             data_b => "000000000000",
             we_a => w_en,
             we_b => '0',
             q_a => q_a_r,
-            q_b => data_out_r
+            q_b => data_out_ram_r
         );
 
     imag_ram_inst : dual_port_ram_single_clock
@@ -150,20 +165,30 @@ begin
             clk => clk,
             addr_a => addr_a_i,
             addr_b => addr_b_i,
-            data_a => data_in_i,
+            data_a => data_in_ram_r,
             data_b => "000000000000",
             we_a => w_en,
             we_b => '0',
             q_a => q_a_i,
-            q_b => data_out_i
+            q_b => data_out_ram_i
         );
 
-    process(clk, arst_n) is
-    begin
-        if arst_n = '0' then
-        elsif rising_edge(clk) then
-        end if;
-    end process;
+    data_in_ext_r(11 downto 0) <= data_in_r;
+    data_in_ext_r(l downto 12) <= (others => data_in_r(11));
+    data_in_ext_i(11 downto 0) <= data_in_i;
+    data_in_ext_i(l downto 12) <= (others => data_in_i(11));
+
+    Br <= data_b_r;
+    Bi <= data_b_i;
+
+    butterfly_input_r <= data_out_ram_r;
+    butterfly_input_i <= data_out_ram_i;
+
+    wi <= w_k_8_r(k);
+    wr <= w_k_8_i(k);
+
+    data_out_r <= data_out_ram_r;
+    data_out_i <= data_out_ram_i;
 
     process(clk, arst_n) is
         if arst_n = '0' then
@@ -173,8 +198,19 @@ begin
             Ar <= butterfly_input_r;
             Ai <= butterfly_input_i;
 
-            butterfly_input_r <= data_b_r;
-            butterfly_input_i <= data_b_i;
+            butterfly_output_r <= S2r;
+            butterfly_output_i <= S2i;
+
+            if sel_input = '0' then
+                data_in_ram_r <= data_in_ext_r;
+                data_in_ram_o <= data_in_ext_i;
+            elsif sel_butterfly_input = '0' then
+                data_in_ram_r <= S1r;
+                data_in_ram_i <= S1i;
+            else
+                data_in_ram_r <= butterfly_output_r;
+                data_in_ram_i <= butterfly_output_i;
+            end if;
         end if;
     end process
 end architucture;
