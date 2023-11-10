@@ -90,7 +90,7 @@ begin
 
 				when calcul =>
 					sel_input <= '1';
-					sel_butterfly_output <= cpt(0);
+					sel_butterfly_output <= std_logic_vector(to_unsigned(cpt(0), 15));
 					if cpt > 1 then
 						w_en <= '1';
 						w_addr <= calcul_addr(cpt - 2);
