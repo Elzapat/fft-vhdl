@@ -58,8 +58,8 @@ package twiddle_factor is
     constant w_3_8_real_16 : std_logic_vector(15 downto 0) := std_logic_vector(to_signed(integer(w_3_8.RE * 28.0), 16));
     constant w_3_8_imag_16 : std_logic_vector(15 downto 0) := std_logic_vector(to_signed(integer(w_3_8.IM * 28.0), 16));
 
-	type twiddle_vec is std_logic_vector(15 downto 0);
+	type twiddle_vec is array(0 to 3) of std_logic_vector(15 downto 0);
 
-	constant w_k_8_r : array(0 to 3) of twiddle_vec := (w_0_8_real_16, w_1_8_real_16, w_2_8_real_16, w_3_8_real_16);
-	constant w_k_8_i : array(0 to 3) of twiddle_vec := (w_0_8_imag_16, w_1_8_imag_16, w_2_8_imag_16, w_3_8_imag_16);
+	constant w_k_8_r : twiddle_vec := (w_0_8_real_16, w_1_8_real_16, w_2_8_real_16, w_3_8_real_16);
+	constant w_k_8_i : twiddle_vec := (w_0_8_imag_16, w_1_8_imag_16, w_2_8_imag_16, w_3_8_imag_16);
 end package;

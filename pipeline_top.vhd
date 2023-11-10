@@ -94,7 +94,7 @@ architecture pipeline of pipeline_top is
 		: std_logic_vector(l+2 downto 0);
 
 begin
-	control: fsm
+	control: pipeline_fsm
 		port map(
 			arst_n => arst_n,
 			clk => clk,

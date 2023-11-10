@@ -1,5 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 entity iterative_fsm is
 	port(
@@ -20,8 +21,11 @@ end entity;
 
 architecture states of iterative_fsm is
 
-	constant calcul_addr: array(0 to 23) of natural range 0 to 7 := (0, 4, 1, 5, 2, 6, 3, 7, 0, 2, 1, 3, 4, 6, 5, 7, 0, 1, 2, 3, 4, 5, 6, 7);
-	constant k_values: array(0 to 11) of natural range 0 to 3 := (0, 1, 2, 3, 0, 2, 0, 2, 0, 0, 0, 0);
+	type calcul_addr_t is array(0 to 23) of natural range 0 to 7;
+	type k_values_t is array(0 to 11) of natural range 0 to 3;
+
+	constant calcul_addr: calcul_addr_t := (0, 4, 1, 5, 2, 6, 3, 7, 0, 2, 1, 3, 4, 6, 5, 7, 0, 1, 2, 3, 4, 5, 6, 7);
+	constant k_values: k_values_t := (0, 1, 2, 3, 0, 2, 0, 2, 0, 0, 0, 0);
 
 	component counter is
 		port (
@@ -51,6 +55,7 @@ begin
 		);
 
 	process(clk, arst_n)
+		variable cpt_logic: std_logic_vector(14 downto 0);
 	begin
 
 		if arst_n = '0' then
@@ -90,7 +95,8 @@ begin
 
 				when calcul =>
 					sel_input <= '1';
-					sel_butterfly_output <= std_logic_vector(to_unsigned(cpt(0), 15));
+					cpt_logic := std_logic_vector(to_unsigned(cpt, 15));
+					sel_butterfly_output <= cpt_logic(0);
 					if cpt > 1 then
 						w_en <= '1';
 						w_addr <= calcul_addr(cpt - 2);
@@ -133,6 +139,5 @@ begin
 
 			end case;
 		end if;
-
-	end process
+	end process;
 end architecture;
