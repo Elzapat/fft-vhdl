@@ -83,7 +83,6 @@ begin
 					in_ready <= '0';
 					inc_cpt <= '1';
 					w_addr <= cpt;
-					sel_butterfly_output <= '0';
 					if cpt >= 7 then
 						rst_cpt <= '1';
 						state <= calcul;
@@ -91,7 +90,7 @@ begin
 
 				when calcul =>
 					sel_input <= '1';
-					sel_butterfly_output <= not sel_butterfly_output;
+					sel_butterfly_output <= cpt(0);
 					if cpt > 1 then
 						w_en <= '1';
 						w_addr <= calcul_addr(cpt - 2);
