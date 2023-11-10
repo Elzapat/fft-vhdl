@@ -76,6 +76,7 @@ begin
 
 				when wait_data =>
 					in_ready <= '1';
+					out_valid <= '0';
 					inc_cpt <= in_valid;
 					rst_cpt <= '0';
 					w_en <= '1';
@@ -117,7 +118,6 @@ begin
 				when wait_out =>
 					out_valid <= '1';
 					inc_cpt <= out_ready;
-					rst_cpt <= '0';
 					w_en <= '0';
 					w_addr <= 0;
 					r_addr <= 0;
@@ -126,6 +126,7 @@ begin
 					end if;
 
 				when transmit =>
+					rst_cpt <= '0';
 					out_valid <= '0';
 					inc_cpt <= '1';
 					r_addr <= cpt;
