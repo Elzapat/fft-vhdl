@@ -130,6 +130,7 @@ begin
 					end if;
 
 				when others =>
+					state <= wait_data;
 
 			end case;
 		end if;
