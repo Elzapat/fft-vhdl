@@ -25,8 +25,8 @@ begin
             elsif inc_cpt = '1' then
                 counter <= counter + 1;
             end if;
-
-            cpt <= counter;
         end if;
     end process;
+
+    cpt <= counter;
 end architecture;
