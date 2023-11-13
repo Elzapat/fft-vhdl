@@ -63,100 +63,109 @@ begin
 		end if;
 	end process;
 
-	process(state, arst_n)
+	process(state, in_valid, cpt)
 		variable cpt_logic: std_logic_vector(14 downto 0);
 	begin
+		case state is
 
-		if arst_n = '0' then
-			next_state <= wait_data;
-			inc_cpt <= '0';
-			rst_cpt <= '0';
-			out_valid <= '0';
-			in_ready <= '1';
-			sel_butterfly_output <= '0';
-			sel_input <= '0';
-			w_addr <= 0;
-			w_en <= '0';
-			r_addr <= 0;
-			k <= 0;
+			when wait_data =>
+				in_ready <= '1';
+				out_valid <= '0';
+				inc_cpt <= in_valid;
+				rst_cpt <= '0';
+				w_en <= '1';
+				sel_input <= '0';
+				sel_butterfly_output <= '0';
+				w_addr <= '0';
+				r_addr <= '0';
+				if in_valid = '1' then
+					next_state <= receive;
+				else
+					next_state <= wait_data;
+				end if;
 
-		else
-			case state is
-
-				when wait_data =>
-					in_ready <= '1';
-					out_valid <= '0';
-					inc_cpt <= in_valid;
+			when receive =>
+				in_ready <= '0';
+				out_valid <= '0';
+				inc_cpt <= '1';
+				w_en <= '1';
+				sel_input <= '0';
+				sel_butterfly_output <= '0';
+				w_addr <= cpt;
+				r_addr <= '0';
+				if cpt >= 7 then
+					rst_cpt <= '1';
+					next_state <= calcul;
+				else
 					rst_cpt <= '0';
+					next_state <= receive;
+				end if;
+
+			when calcul =>
+				in_ready <= '0';
+				out_valid <= '0';
+				inc_cpt <= '1';
+				sel_input <= '1';
+				cpt_logic := std_logic_vector(to_unsigned(cpt, 15));
+				sel_butterfly_output <= cpt_logic(0);
+				if cpt > 1 then
 					w_en <= '1';
-					sel_input <= '0';
-					if in_valid = '1' then
-						next_state <= receive;
-					else
-						next_state <= wait_data;
-					end if;
-
-				when receive =>
-					in_ready <= '0';
-					inc_cpt <= '1';
-					w_addr <= cpt;
-					if cpt >= 7 then
-						rst_cpt <= '1';
-						next_state <= calcul;
-					else
-						rst_cpt <= '0';
-						next_state <= receive;
-					end if;
-
-				when calcul =>
-					sel_input <= '1';
-					cpt_logic := std_logic_vector(to_unsigned(cpt, 15));
-					sel_butterfly_output <= cpt_logic(0);
-					if cpt > 1 then
-						w_en <= '1';
-						w_addr <= calcul_addr(cpt - 2);
-					else
-						w_en <= '0';
-					end if;
-					if cpt < 24 then
-						r_addr <= calcul_addr(cpt);
-						k <= k_values(cpt/2);
-					elsif cpt = 25 then
-						rst_cpt <= '1';
-						next_state <= wait_out;
-					else
-						rst_cpt <= '0';
-					end if;
-
-				when wait_out =>
-					out_valid <= '1';
-					inc_cpt <= out_ready;
+					w_addr <= calcul_addr(cpt - 2);
+				else
 					w_en <= '0';
 					w_addr <= 0;
+				end if;
+				if cpt < 24 then
+					r_addr <= calcul_addr(cpt);
+					k <= k_values(cpt/2);
+				else
 					r_addr <= 0;
-					if out_ready = '1' then
-						next_state <= transmit;
-					else
-						next_state <= wait_out;
-					end if;
-
-				when transmit =>
+					k <= 0;
+				end if;
+				if cpt = 25 then
+					rst_cpt <= '1';
+					next_state <= wait_out;
+				else
 					rst_cpt <= '0';
-					out_valid <= '0';
-					inc_cpt <= '1';
-					r_addr <= cpt;
-					if cpt >= 7 then
-						rst_cpt <= '1';
-						next_state <= wait_data;
-					else
-						rst_cpt <= '0';
-						next_state <= transmit;
-					end if;
+					next_state <= calcul;
+				end if;
 
-				when others =>
+			when wait_out =>
+				in_ready <= '0';
+				out_valid <= '1';
+				inc_cpt <= out_ready;
+				rst_cpt <= '0'
+				sel_input <= '0';
+				sel_butterfly_output <= '0';
+				w_en <= '0';
+				w_addr <= 0;
+				r_addr <= 0;
+				if out_ready = '1' then
+					next_state <= transmit;
+				else
+					next_state <= wait_out;
+				end if;
+
+			when transmit =>
+				in_ready <= '0';
+				out_valid <= '0';
+				inc_cpt <= '1';
+				sel_input <= '0';
+				sel_butterfly_output <= '0';
+				w_en <= '0';
+				w_addr <= 0;
+				r_addr <= cpt;
+				if cpt >= 7 then
+					rst_cpt <= '1';
 					next_state <= wait_data;
+				else
+					rst_cpt <= '0';
+					next_state <= transmit;
+				end if;
 
-			end case;
-		end if;
+			when others =>
+				next_state <= wait_data;
+
+		end case;
 	end process;
 end architecture;
