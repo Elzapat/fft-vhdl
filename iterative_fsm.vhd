@@ -71,13 +71,13 @@ begin
 			when wait_data =>
 				in_ready <= '1';
 				out_valid <= '0';
-				inc_cpt <= in_valid;
+				inc_cpt <= '0';
 				rst_cpt <= '0';
 				w_en <= '1';
 				sel_input <= '0';
 				sel_butterfly_output <= '0';
-				w_addr <= '0';
-				r_addr <= '0';
+				w_addr <= 0;
+				r_addr <= 0;
 				if in_valid = '1' then
 					next_state <= receive;
 				else
@@ -92,7 +92,7 @@ begin
 				sel_input <= '0';
 				sel_butterfly_output <= '0';
 				w_addr <= cpt;
-				r_addr <= '0';
+				r_addr <= 0;
 				if cpt >= 7 then
 					rst_cpt <= '1';
 					next_state <= calcul;
@@ -134,7 +134,7 @@ begin
 				in_ready <= '0';
 				out_valid <= '1';
 				inc_cpt <= out_ready;
-				rst_cpt <= '0'
+				rst_cpt <= '0';
 				sel_input <= '0';
 				sel_butterfly_output <= '0';
 				w_en <= '0';

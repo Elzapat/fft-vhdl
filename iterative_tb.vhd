@@ -101,8 +101,6 @@ begin
                     i := 0;
 
                     while i < 8 loop
-                        wait until rising_edge(clk);
-
                         if endfile(input_data) then
                             report "Unexpected end of file" severity error;
                         else
@@ -119,6 +117,7 @@ begin
                         end if;
 
                         i := i + 1;
+                        wait until rising_edge(clk);
                     end loop;
                 end if;
             end if;
@@ -167,7 +166,7 @@ begin
 
     process
     begin
-        wait for 100 ns;
+        wait for 20 ns;
 
         wait until rising_edge(clk);
         wait for 3ns;
