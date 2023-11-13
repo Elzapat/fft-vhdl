@@ -84,6 +84,7 @@ begin
         variable row : line;
         variable data_r, data_i : real;
         variable data_r_int, data_i_int : integer;
+        variable i : integer;
     begin
         file_open(input_data, data_in_filename, read_mode);
 
@@ -97,21 +98,28 @@ begin
 
             if not endfile(input_data) then
                 if in_ready = '1' and in_valid = '1' then
-                    if endfile(input_data) then
-                        report "Unexpected end of file" severity error;
-                    else
-                        readline(input_data, row);
+                    i := 0;
 
-                        read(row, data_r);
-                        read(row, data_i);
+                    while i < 8 loop
+                        wait until rising_edge(clk);
 
-                        data_r_int := integer(8.0 * data_r);
-                        data_i_int := integer(8.0 * data_i);
+                        if endfile(input_data) then
+                            report "Unexpected end of file" severity error;
+                        else
+                            readline(input_data, row);
 
-                        data_in_r <= std_logic_vector(to_signed(data_r_int, l-3));
-                        data_in_i <= std_logic_vector(to_signed(data_i_int, l-3));
+                            read(row, data_r);
+                            read(row, data_i);
 
-                    end if;
+                            data_r_int := integer(8.0 * data_r);
+                            data_i_int := integer(8.0 * data_i);
+
+                            data_in_r <= std_logic_vector(to_signed(data_r_int, l-3));
+                            data_in_i <= std_logic_vector(to_signed(data_i_int, l-3));
+                        end if;
+
+                        i := i + 1;
+                    end loop;
                 end if;
             end if;
         end loop;
@@ -120,7 +128,7 @@ begin
 
         file_close(input_data);
 
-        wait for 50ns;
+        wait for 1000ns;
 
         report "end of input file" severity failure;
     end process;
@@ -131,17 +139,25 @@ begin
         variable row : line;
         variable data_r : real;
         variable data_i : real;
+        variable i : integer;
     begin
         wait for 1 ns;
 
         if out_valid = '1' and out_ready = '1' then
-            data_r := real(to_integer(signed(data_out_r))) / 8.0;
-            data_i := real(to_integer(signed(data_out_i))) / 8.0;
+            i := 0;
 
-            write(row, data_r);
-            write(row, ' ');
-            write(row, data_i);
-            writeline(output_data, row);
+            while i < 8 loop
+                data_r := real(to_integer(signed(data_out_r))) / 8.0;
+                data_i := real(to_integer(signed(data_out_i))) / 8.0;
+
+                write(row, data_r);
+                write(row, ' ');
+                write(row, data_i);
+                writeline(output_data, row);
+
+                i := i + 1;
+                wait until rising_edge(clk);
+            end loop;
         end if;
 
         wait until rising_edge(clk);
@@ -153,14 +169,14 @@ begin
     begin
         wait for 100 ns;
 
-        --wait until rising_edge(clk);
-        --wait for 3ns;
+        wait until rising_edge(clk);
+        wait for 3ns;
 
         in_valid <= '1';
 
-        --wait until rising_edge(clk);
-        --wait for 3ns;
+        wait until rising_edge(clk);
+        wait for 3ns;
 
-        --in_valid <= '0';
+        in_valid <= '0';
     end process;
 end architecture;

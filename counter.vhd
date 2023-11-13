@@ -22,7 +22,7 @@ begin
         elsif rising_edge(clk) then
             if rst_cpt = '1' then
                 counter <= 0;
-            elsif inc_cpt = '1' then
+            elsif inc_cpt = '1' and counter < 25 then
                 counter <= counter + 1;
             end if;
         end if;

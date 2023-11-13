@@ -91,6 +91,7 @@ begin
 					w_addr <= cpt;
 					if cpt >= 7 then
 						rst_cpt <= '1';
+						-- w_en <= '0';
 						state <= calcul;
 					end if;
 
@@ -108,7 +109,7 @@ begin
 						r_addr <= calcul_addr(cpt);
 						k <= k_values(cpt/2);
 					end if;
-					if cpt = 25 then
+					if cpt = 24 then
 						rst_cpt <= '1';
 						state <= wait_out;
 					else

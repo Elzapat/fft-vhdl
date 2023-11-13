@@ -207,8 +207,8 @@ begin
     process(clk, arst_n)
     begin
         if arst_n = '0' then
-            butterfly_input_r <= (others => '0');
-            butterfly_input_i <= (others => '0');
+            -- butterfly_input_r <= (others => '0');
+            -- butterfly_input_i <= (others => '0');
         elsif rising_edge(clk) then
             Ar <= butterfly_input_r(l-2 downto 0);
             Ai <= butterfly_input_i(l-2 downto 0);
