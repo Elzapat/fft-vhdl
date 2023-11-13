@@ -92,6 +92,8 @@ begin
 					sel_input <= '0';
 					if in_valid = '1' then
 						next_state <= receive;
+					else
+						next_state <= wait_data;
 					end if;
 
 				when receive =>
@@ -101,6 +103,9 @@ begin
 					if cpt >= 7 then
 						rst_cpt <= '1';
 						next_state <= calcul;
+					else
+						rst_cpt <= '0';
+						next_state <= receive;
 					end if;
 
 				when calcul =>
@@ -116,8 +121,7 @@ begin
 					if cpt < 24 then
 						r_addr <= calcul_addr(cpt);
 						k <= k_values(cpt/2);
-					end if;
-					if cpt = 25 then
+					elsif cpt = 25 then
 						rst_cpt <= '1';
 						next_state <= wait_out;
 					else
@@ -132,6 +136,8 @@ begin
 					r_addr <= 0;
 					if out_ready = '1' then
 						next_state <= transmit;
+					else
+						next_state <= wait_out;
 					end if;
 
 				when transmit =>
@@ -142,6 +148,9 @@ begin
 					if cpt >= 7 then
 						rst_cpt <= '1';
 						next_state <= wait_data;
+					else
+						rst_cpt <= '0';
+						next_state <= transmit;
 					end if;
 
 				when others =>
