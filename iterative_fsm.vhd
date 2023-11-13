@@ -81,7 +81,7 @@ begin
 			k <= 0;
 
 		else
-			case next_state is
+			case state is
 
 				when wait_data =>
 					in_ready <= '1';
