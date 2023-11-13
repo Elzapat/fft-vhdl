@@ -39,7 +39,7 @@ architecture states of iterative_fsm is
 
 	type state_t is (wait_data, receive, calcul, wait_out, transmit);
 
-	signal state: state_t;
+	signal state, next_state: state_t;
 	signal inc_cpt, rst_cpt: std_logic;
 	signal cpt: integer range 0 to 25;
 
@@ -55,11 +55,20 @@ begin
 		);
 
 	process(clk, arst_n)
+	begin
+		if arst_n = '0' then
+			state <= wait_data;
+		elsif rising_edge(clk) then
+			state <= next_state;
+		end if;
+	end process;
+
+	process(state, arst_n)
 		variable cpt_logic: std_logic_vector(14 downto 0);
 	begin
 
 		if arst_n = '0' then
-			state <= wait_data;
+			next_state <= wait_data;
 			inc_cpt <= '0';
 			rst_cpt <= '0';
 			out_valid <= '0';
@@ -71,8 +80,8 @@ begin
 			r_addr <= 0;
 			k <= 0;
 
-		elsif rising_edge(clk) then
-			case state is
+		else
+			case next_state is
 
 				when wait_data =>
 					in_ready <= '1';
@@ -82,7 +91,7 @@ begin
 					w_en <= '1';
 					sel_input <= '0';
 					if in_valid = '1' then
-						state <= receive;
+						next_state <= receive;
 					end if;
 
 				when receive =>
@@ -91,8 +100,7 @@ begin
 					w_addr <= cpt;
 					if cpt >= 7 then
 						rst_cpt <= '1';
-						-- w_en <= '0';
-						state <= calcul;
+						next_state <= calcul;
 					end if;
 
 				when calcul =>
@@ -109,9 +117,9 @@ begin
 						r_addr <= calcul_addr(cpt);
 						k <= k_values(cpt/2);
 					end if;
-					if cpt = 24 then
+					if cpt = 25 then
 						rst_cpt <= '1';
-						state <= wait_out;
+						next_state <= wait_out;
 					else
 						rst_cpt <= '0';
 					end if;
@@ -123,7 +131,7 @@ begin
 					w_addr <= 0;
 					r_addr <= 0;
 					if out_ready = '1' then
-						state <= transmit;
+						next_state <= transmit;
 					end if;
 
 				when transmit =>
@@ -133,11 +141,11 @@ begin
 					r_addr <= cpt;
 					if cpt >= 7 then
 						rst_cpt <= '1';
-						state <= wait_data;
+						next_state <= wait_data;
 					end if;
 
 				when others =>
-					state <= wait_data;
+					next_state <= wait_data;
 
 			end case;
 		end if;
