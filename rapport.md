@@ -16,6 +16,11 @@ block-headings: true
 indent: true
 header-includes:
 	- \usepackage{circuitikz}
+    - \newcommand{\hideFromPandoc}[1]{#1}
+    - \hideFromPandoc{
+        \let\Begin\begin
+        \let\End\end
+      }
 ...
 
 # Presentation
@@ -40,22 +45,27 @@ header-includes:
 
 ### Machine d'état
 
+Pour l'architecture itérative, nous allons faire une nouvelle machine d'état de Mealy. Le graph la décrivant est sur la figure \ref{fig:iterative_sm_graph}.
 
+\Begin{figure}
+```mermaid
+graph LR
+    WAIT_DATA-- in_valid=0 -->WAIT_DATA
+    WAIT_DATA --> RECEIVE
+    RECEIVE-- cpt < 7 -->RECEIVE
+    RECEIVE---->CALCUL
+    CALCUL-- cpt < 25 -->CALCUL
+    CALCUL-- cpt = 25 -->WAIT_OUT
+    WAIT_OUT-- out_ready=0 --> WAIT_OUT
+    WAIT_OUT -- out_ready=1 -->TRANSMIT
+    TRANSMIT-- cpt < 7 -->TRANSMIT
+    TRANSMIT-- cpt = 7 -->WAIT_DATA
+```
+\caption{test}
+\label{fig:iterative_sm_graph}
+\End{figure}
 
-+-------------------+--------------+--------------+--------------+--------------+--------------+--------------+
-|                   | `out_valid`  | `in_ready`   | `inc_cpt`    | `rst_cpt`    | `w_en`       | `sel_input1` |
-+===================+:============:+:============:+:============:+:============:+:============:+:============:+
-| WAIT_DATA         | 0            | 1            | `in_valid`   | 0            | 1            | 0            |
-+-------------------+--------------+--------------+--------------+--------------+--------------+--------------+
-| RECEIVE           | 0            | 0            | 1            | `cpt = 7`    | 1            | 0            |
-+-------------------+--------------+--------------+--------------+--------------+--------------+--------------+
-| CALCUL            | 0            | 0            | 1            | `cpt = 25`   | `cpt > 1`    | 1            |
-+-------------------+--------------+--------------+--------------+--------------+--------------+--------------+
-| WAIT_OUT          | 1            | 0            | `out_ready`  | 0            | 0            | X            |
-+-------------------+--------------+--------------+--------------+--------------+--------------+--------------+
-| TRANSMIT          | 0            | 0            | 1            | 1            | 1            | 1            |
-+-------------------+--------------+--------------+--------------+--------------+--------------+--------------+
-
+Nous pouvons ensuite écrire un tableau décrivant les différentes valeurs que doivent prendre les paramètres de la machine en fonction de l'état présent.
 ### Séquencage d'adresses
 
 ## Implémentation
