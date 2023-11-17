@@ -6,7 +6,9 @@ author:
 	- Morgan Van Amerongen
 date: Vendredi 17 novembre 2023
 lang: fr
-documentclass: report
+documentclass: article
+classoption: twocolumn
+numbersections: true
 geometry:
 	- margin=1in
 toc: true
@@ -21,6 +23,12 @@ header-includes:
 # Presentation
 
 \lipsum[1-10]
+
+# Opérateur papillon
+
+## Théorie
+
+## Implémentation
 
 # Architecture pipeline
 
