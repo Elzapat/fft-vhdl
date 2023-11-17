@@ -7,8 +7,8 @@ use work.twiddle_factor.all;
 
 entity iterative_top is
 	generic(
-		l: integer; -- Data size
-		n: integer -- Bits after the decimal point
+		l: integer := 15; -- Data size
+		n: integer := 3 -- Bits after the decimal point
 	);
 	port(
 		in_valid: in std_logic;

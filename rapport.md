@@ -171,7 +171,7 @@ Nous pouvons ensuite écrire un tableau décrivant les différentes valeurs que 
 
 \Begin{figure}
 +-------------------+--------------+--------------+--------------+--------------+--------------+--------------+
-|                   | `out_valid`  | `in_ready`   | `inc_cpt`    | `rst_cpt`    | `w_en`       | `sel_input1` |
+|                   | `out_valid`  | `in_ready`   | `inc_cpt`    | `rst_cpt`    | `w_en`       | `sel_input`  |
 +===================+:============:+:============:+:============:+:============:+:============:+:============:+
 | WAIT_DATA         | 0            | 1            | `in_valid`   | 0            | 1            | 0            |
 +-------------------+--------------+--------------+--------------+--------------+--------------+--------------+
@@ -252,7 +252,7 @@ Les tableaux suivants indiquent l'ordre dans lequel il faut adresser la RAM en l
 
 L'implémentation de l'architecture *Full Iterative* n'utilise qu'une seule instance de l'opérateur papillion qui sera reutilisée pour toutes les opérations. Cela aura l'avantage d'utiliser moins de ressources dans la plupart des cas, mais sera aussi plus lent que l'architecture alternative.
 
-La seule instance de l'opérateur papillion aura ses entrees et ses sorties branchées respectivement sur l'entrée et la sortie de la RAM. Comme la RAM n'a qu'une seule entrée et qu'une seule sortie, il faudra mettre une bascule sur une des entrées et sur une des sorties du papillion. Cela permettera de synchroniser les deux entrées et les deux sorties de l'opérateur papillion.
+La seule instance de l'opérateur papillion aura ses entrées et ses sorties branchées respectivement sur l'entrée et la sortie de la RAM. Comme la RAM n'a qu'une seule entrée et qu'une seule sortie, il faudra mettre une bascule sur une des entrées et sur une des sorties du papillion. Cela permettera de synchroniser les deux entrées et les deux sorties de l'opérateur papillion.
 
 Deux multiplexeurs seront ajoutées pour controller si l'entrée de la RAM viendra de la sortie de l'opérateur papillion ou des données d'entrées.
 
@@ -270,4 +270,8 @@ L'architecture hybride permet d'essayer de profiter des avantages de l'architect
 
 ## Préparation
 
+Pour combiner les deux architectures étudiés précédemment, il serait possible d'instancier quatres opérateurs papillion, simulant un étage de l'architecture pipeline. Ensuite, à l'instar de l'architecture itérative, une RAM dual port pourrait être instanciée afin de stocker les résultats intermédiaires.
+
 ## Structure
+
+
