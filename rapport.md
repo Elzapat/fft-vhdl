@@ -164,11 +164,84 @@ Nous pouvons ensuite écrire un tableau décrivant les différentes valeurs que 
 
 ### Séquencage d'adresses
 
+Les tableaux suivants indiquent l'ordre dans lequel il faut adresser la RAM en lecture et en écriture.
+
+#### Réception
+
+ R | W
+:-:|:-:
+ X | 0
+ X | 1
+ X | 2
+ X | 3
+ X | 4
+ X | 5
+ X | 6
+ X | 7
+
+#### Calcul
+
+ R | W
+:-:|:-:
+ 0 | X
+ 4 | X
+ 1 | 0
+ 5 | 4
+ 2 | 1
+ 6 | 5
+ 3 | 2
+ 7 | 6
+ 0 | 3
+ 2 | 7
+ 1 | 0
+ 3 | 2
+ 4 | 1
+ 6 | 3
+ 5 | 4
+ 7 | 6
+ 0 | 5
+ 1 | 7
+ 2 | 0
+ 3 | 1
+ 4 | 2
+ 5 | 3
+ 6 | 4
+ 7 | 5
+ X | 6
+ X | 7
+
+#### Transmission
+
+ R | W
+:-:|:-:
+ 0 | X
+ 4 | X
+ 2 | X
+ 6 | X
+ 1 | X
+ 5 | X
+ 3 | X
+ 7 | X
+
 ## Implémentation
+
+L'implémentation de l'architecture *Full Iterative* n'utilise qu'une seule instance de l'opérateur papillion qui sera reutilisée pour toutes les opérations. Cela aura l'avantage d'utiliser moins de ressources dans la plupart des cas, mais sera aussi plus lent que l'architecture alternative.
+
+La seule instance de l'opérateur papillion aura ses entrees et ses sorties branchées respectivement sur l'entrée et la sortie de la RAM. Comme la RAM n'a qu'une seule entrée et qu'une seule sortie, il faudra mettre une bascule sur une des entrées et sur une des sorties du papillion. Cela permettera de synchroniser les deux entrées et les deux sorties de l'opérateur papillion.
+
+Deux multiplexeurs seront ajoutées pour controller si l'entrée de la RAM viendra de la sortie de l'opérateur papillion ou des données d'entrées.
+
+Pour contrôler ce circuit, un compteur basique a été immplementé. Il permettera à la machine à état de décider des adresses auxquelle il faut lire dans la RAM et de calculer les différents états.
+
+![Architecture *Full Iterative*](architecture_full_iterative.png)
 
 ## Performances
 
+Plus la taille des FFT sera grande, plus le gain de ressources de l'architecture *Full Iterative* sur l'architecture *Full Pipeline* sera évident. Avec les petites FFT que nous avons implémentés, l'avantage ne se voit pas car le seuil de ressources demandé par la RAM et les autres petits composants utilisés sera tout de même important.
+
 # Architecture hybride
+
+L'architecture hybride permet d'essayer de profiter des avantages de l'architecture itérative et de l'architecture pipeline. Il s'agira de combiner le parallèlisme de l'architecture pipeline avec le économie de ressource de l'architecture itérative.
 
 ## Préparation
 
