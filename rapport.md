@@ -81,37 +81,7 @@ Les coefficients du papillon sont donnés par $w^k_n=e^{-2i\frac{\pi k}{n}}$, d'
 
 ## Préparation
 
-\Begin{figure}
-~~~mermaid
-graph LR
-    E000--0X-->E000
-    E000--1X-->E100
-    E100--0X-->E010
-    E100--1X-->E110
-    E110--0X-->E011
-    E011--00-->E011
-    E110--1X-->E111
-    E010--1X-->E101
-    E010--0X-->E001
-    E011--01-->E001
-    E011--10-->E111
-    E011--11-->E101
-    E111--00-->E111
-    E111--01-->E011
-    E111--10-->E111
-    E111--11-->E111
-    E101--00-->E011
-    E101--01-->E010
-    E101--10-->E111
-    E101--11-->E110
-    E001--00-->E001
-    E001--01-->E000
-    E001--10-->E101
-    E001--11-->E100
-~~~
-\caption{Graph de la machine de Mealy pour l'architecture \textit{Full pipeline}}
-\label{pipeline_sm_graph}
-\End{figure}
+![Graph de la machine de Mealy pour l'architecture *Full Pipeline*\label{fig:pipeline_sm_graph}](mealy_pipeline.png)
 
 \Begin{figure}
 +--------------+--------------+--------------+--------------+--------------+--------------+
@@ -149,23 +119,7 @@ graph LR
 
 Pour l'architecture itérative, nous allons faire une nouvelle machine Mealy. Le graph la décrivant est sur la figure \ref{fig:iterative_sm_graph}.
 
-\Begin{figure}
-```mermaid
-graph LR
-    WAIT_DATA-- in_valid=0 -->WAIT_DATA
-    WAIT_DATA --> RECEIVE
-    RECEIVE-- cpt < 7 -->RECEIVE
-    RECEIVE---->CALCUL
-    CALCUL-- cpt < 25 -->CALCUL
-    CALCUL-- cpt = 25 -->WAIT_OUT
-    WAIT_OUT-- out_ready=0 --> WAIT_OUT
-    WAIT_OUT -- out_ready=1 -->TRANSMIT
-    TRANSMIT-- cpt < 7 -->TRANSMIT
-    TRANSMIT-- cpt = 7 -->WAIT_DATA
-```
-\caption{Graph de la machine de Mealy pour l'architecture \textit{Full Iterative}}
-\label{fig:iterative_sm_graph}
-\End{figure}
+![Graph de la machine de Mealy pour l'architecture *Full Iterative*\label{fig:iterative_sm_graph}](mealy_iterative.png)
 
 Nous pouvons ensuite écrire un tableau décrivant les différentes valeurs que doivent prendre les paramètres de la machine en fonction de l'état présent. Voir figure \ref{fig:iterative_sm_table}.
 
