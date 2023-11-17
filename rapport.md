@@ -138,7 +138,7 @@ graph LR
     TRANSMIT-- cpt < 7 -->TRANSMIT
     TRANSMIT-- cpt = 7 -->WAIT_DATA
 ```
-\caption{Graph de la machine Mealy pour l'architecture \textit{Full Iterative}}
+\caption{Graph de la machine de Mealy pour l'architecture \textit{Full Iterative}}
 \label{fig:iterative_sm_graph}
 \End{figure}
 
