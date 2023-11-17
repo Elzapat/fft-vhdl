@@ -1,5 +1,5 @@
 ---
-title: Implémentations de l'algorithme FFT en VHDL
+title: Implémentations de l'algorithme FFT sur FPGA
 subtitle: Rapport de projet
 author:
 	- Arthur Gaudard
@@ -24,6 +24,12 @@ header-includes:
 ...
 
 # Presentation
+
+L'objectif de ce projet est d'explorer les différentes implémentations possibles de l'algorithme Fast Fourier Transform (FFT) sur FPGA, afin de comparer leurs performances au niveau temporel (débit et latence) et au niveau matériel (ressources mémoire et calculatoires). La programmation sera faite en VHDL et simulée en utilisant le logiciel ModelSim.
+
+Les implémentations présentées ici prennent en entrée $n = 8$ échantillons codés sur 12 bits en virgule fixe signée avec 3 bits après la virgule.
+
+\break
 
 # Opérateur papillon
 
@@ -72,19 +78,34 @@ S_{2r} = w^k_{nr}(A_r-B_r) + w^k_{ni}(B_i-A_i)\\
 S_{2i} = w^k_{nr}(A_i-B_i) + w^k_{ni}(A_r-B_r)\\
 \end{cases}}$$
 
-Les coefficients du papillon sont donnés par $w^k_n=e^{-2i\frac{\pi k}{n}}$, d'où $(w^k_{nr},w^k_{ni}) \in \left[-1;1\right]^2$.
+Les coefficients du papillon sont donnés par $w^k_n=e^{-2i\frac{\pi k}{n}}$, d'où $(w^k_{nr},w^k_{ni}) \in [-1;1[^2$.
 
 ## Implémentation
 
-On suppose que $A_r$, $A_i$, $B_r$ et $B_i$ sont codés comme des nombres à virgule fixe au format $(1;l;n)$. On en déduit que $S_{1r}$, $S_{1i}$, $S_{2r}$ et $S_{2i}$ sont au format $(1;l+1;n)$ car la somme de deux nombres dans l'intervalle $[-2^{l-1};2^{l-1}-1]$ (codable sur $l$ bits) appartient à $[-2^l;2^l-2]$ (codable sur $l+1$ bits).
+On suppose que $A_r$, $A_i$, $B_r$ et $B_i$ sont codés comme des nombres à virgule fixe au format $(1;l;n)$. On en déduit que $S_{1r}$, $S_{1i}$, $S_{2r}$ et $S_{2i}$ sont au format $(1;l+1;n)$ car la somme de deux nombres dans l'intervalle $[-2^{l-1};2^{l-1}-1]$ (codable sur $l$ bits) appartient à $[-2^l;2^l-2]$ (codable sur $l+1$ bits). Sachant cela, le format de $w^k_n$ doit être $(1,l+2,l+1)$ afin d'autoriser la multiplication avec $A$ et $B$.
+
+Il s'agit d'un composant purement combinatoire, ce qui élimine le besoin d'un signal d'horloge ou de reset à cette étape.
 
 # Architecture pipeline
 
-## Préparation
+L'idée de l'architecture pipeline est de maximiser les calculs en parallèles afin de réduire la latence et le débit au maximum. Ce résultat s'obtient cependant au prix d'une utilisation plus importante des ressources matérielles.
 
-![Graph de la machine de Mealy pour l'architecture *Full Pipeline*\label{fig:pipeline_sm_graph}](mealy_pipeline.png)
+## Implémentation
+
+### Architecture générale
+
+L'algorithme FFT pour $n = 8$ échantillons nécessite d'utiliser 12 fois l'opérateur papillon (voir sec. 2), séparés en 3 étages successifs de 4 calculs simultanés (voir fig. \ref{fig:fft-butterflies}).
+
+![Organisation des papillons pour la FFT\label{fig:fft-butterflies}](butterflies_pipeline.png){width=70%}
+
+Ces étages sont séparés par des registres dont l'activation est contrôlée par une machine à états finis décrite dans la partie suivante.
+
+### Machine à états finis
+
+![Graphe de la machine à états finis de Mealy pour l'architecture *Full Pipeline*\label{fig:pipeline_sm_graph}](mealy_pipeline.png){width=80%}
 
 \Begin{figure}
+
 +--------------+--------------+--------------+--------------+--------------+--------------+
 | État présent | `in_ready`   | `out_valid`  | `en1`        | `en2`        | `en3`        |
 +:============:+:============:+:============:+:============:+:============:+:============:+
@@ -104,13 +125,16 @@ On suppose que $A_r$, $A_i$, $B_r$ et $B_i$ sont codés comme des nombres à vir
 +--------------+--------------+--------------+--------------+--------------+--------------+
 | E111         | `out_ready`  | 1            | `out_ready`  | `out_ready`  | `out_ready`  |
 +--------------+--------------+--------------+--------------+--------------+--------------+
-\caption{Valeur des paramètres de la machine d'état pour l'architecture \textit{Full Pipeline}}
+
+\caption{Table des sorties de la machine à états finis pour l'architecture \textit{Full Pipeline}}
 \label{fig:pipeline_sm_table}
 \End{figure}
 
-## Implémentation
-
 ## Performances
+
+Comme les données passent d'un étage au suivant en une période d'horloge, la latence est égale au temps nécessaire à une donnée pour traverser les trois étages. Elle est donc de l'ordre de $L = 3T_{CK} = \frac{3}{f_{CK}}$ s.
+Pour ce qui est du débit, le système est prêt à recevoir des données dès qu'elles sont passées à l'étage suivant, ce qui permet de traiter $D = 8\times 12 \times f_{CK}$ bits/s.
+Cette architecture utilise cependant beaucoup de ressources matérielles, car les 12 papillons doivent être implémentés en même temps. Ce n'est pas très important pour $n = 8$, mais on voit que la complexité matérielle est en $O(n\log_2(n))$.
 
 # Architecture itérative
 
@@ -118,13 +142,14 @@ On suppose que $A_r$, $A_i$, $B_r$ et $B_i$ sont codés comme des nombres à vir
 
 ### Machine d'état
 
-Pour l'architecture itérative, nous allons faire une nouvelle machine Mealy. Le graph la décrivant est sur la figure \ref{fig:iterative_sm_graph}.
+Pour l'architecture itérative, nous allons faire une nouvelle machine à états finis de Mealy. Le graphe la décrivant est sur la figure \ref{fig:iterative_sm_graph}.
 
-![Graph de la machine de Mealy pour l'architecture *Full Iterative*\label{fig:iterative_sm_graph}](mealy_iterative.png)
+![Graphe de la machine à états finis de Mealy pour l'architecture *Full Iterative*\label{fig:iterative_sm_graph}](mealy_iterative.png)
 
-Nous pouvons ensuite écrire un tableau décrivant les différentes valeurs que doivent prendre les paramètres de la machine en fonction de l'état présent. Voir figure \ref{fig:iterative_sm_table}.
+Nous pouvons ensuite écrire un tableau décrivant les différentes valeurs que doivent prendre les paramètres de la machine à états finis en fonction de l'état présent. Voir figure \ref{fig:iterative_sm_table}.
 
 \Begin{figure}
+
 +-------------------+--------------+--------------+--------------+--------------+--------------+--------------+
 |                   | `out_valid`  | `in_ready`   | `inc_cpt`    | `rst_cpt`    | `w_en`       | `sel_input`  |
 +===================+:============:+:============:+:============:+:============:+:============:+:============:+
@@ -138,7 +163,8 @@ Nous pouvons ensuite écrire un tableau décrivant les différentes valeurs que 
 +-------------------+--------------+--------------+--------------+--------------+--------------+--------------+
 | TRANSMIT          | 0            | 0            | 1            | 1            | 1            | 1            |
 +-------------------+--------------+--------------+--------------+--------------+--------------+--------------+
-\caption{Valeur des paramètres de la machine d'état pour l'architecture \textit{Full Iterative}}
+
+\caption{Valeur des paramètres de la machine à états pour l'architecture \textit{Full Iterative}}
 \label{fig:iterative_sm_table}
 \End{figure}
 
@@ -211,9 +237,9 @@ La seule instance de l'opérateur papillon aura ses entrées et ses sorties bran
 
 Deux multiplexeurs seront ajoutées pour controller si l'entrée de la RAM viendra de la sortie de l'opérateur papillon ou des données d'entrées.
 
-Pour contrôler ce circuit, un compteur basique a été immplementé. Il permettera à la machine à état de décider des adresses auxquelle il faut lire dans la RAM et de calculer les différents états.
+Pour contrôler ce circuit, un compteur basique a été immplementé. Il permettera à la machine à états finis de décider des adresses auxquelle il faut lire dans la RAM et de calculer les différents états.
 
-![Architecture *Full Iterative*](architecture_full_iterative.png)
+![Architecture *Full Iterative*](architecture_full_iterative.png){width=70%}
 
 ## Performances
 
