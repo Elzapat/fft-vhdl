@@ -52,7 +52,9 @@ header-includes:
 
 ## Préparation
 
-\lipsum[26-30]
+### Machine d'état
+
+### Séquencage d'adresses
 
 ## Implémentation
 
