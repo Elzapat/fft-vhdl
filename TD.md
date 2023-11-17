@@ -1,5 +1,4 @@
 ---
-<<<<<<< Updated upstream
 geometry: "margin=3cm"
 ---
 =======
@@ -12,7 +11,6 @@ header-includes:
 	  }'
 ...
 
->>>>>>> Stashed changes
 ## 2.1
 
 $\text{A et B au format (1;l;n)}$
@@ -173,7 +171,6 @@ graph LR
 | E111         | `out_ready`  | 1            | `out_ready`  | `out_ready`  | `out_ready`  |
 +--------------+--------------+--------------+--------------+--------------+--------------+
 
-<<<<<<< Updated upstream
 ## Approche itérative
 
 ### Réception
@@ -362,4 +359,3 @@ Tout mettre sur 15 bits (rajouter 3 fois le bit de signe à l'entrée)
  7 | X
 
 \endmini
->>>>>>> Stashed changes
