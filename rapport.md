@@ -66,14 +66,14 @@ S_2 &= w^k_n(A-B)\\
 
 D'où :
 
-$$\begin{cases}
+$$\boxed{\begin{cases}
 S_{1r} = A_r+B_r\\
 S_{1i} = A_i+B_i\\
 S_{2r} = w^k_{nr}(A_r-B_r) + w^k_{ni}(B_i-A_i)\\
 S_{2i} = w^k_{nr}(A_i-B_i) + w^k_{ni}(A_r-B_r)\\
-\end{cases}$$
+\end{cases}}$$
 
-Les coefficients du papillon sont donnés par $w^k_n=e^{-2i\frac{\pi k}{n}$, d'où $(w^k_{nr},w^k_{ni}) \in \left[-1;1\right]^2$.
+Les coefficients du papillon sont donnés par $w^k_n=e^{-2i\frac{\pi k}{n}}$, d'où $(w^k_{nr},w^k_{ni}) \in \left[-1;1\right]^2$. 
 
 ## Implémentation
 
