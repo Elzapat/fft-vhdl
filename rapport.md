@@ -48,7 +48,32 @@ Le calcul du spectre est basé sur un opérateur complexe appelé "papillon". Ce
 \end{figure}
 \end{centering}
 
-$A$ et $B$ sont codés comme des nombres à virgule fixe au format $(1;l;n)$ 
+$A$ et $B$ sont codés comme des paires de nombres à virgule fixe au format $(1;l;n)$, avec leurs parties réelle et imaginaire. On a alors :
+
+$$\begin{aligned}
+S_1 &= A+B\\
+&= A_r + iA_i + B_r + iB_i\\
+&= A_r + B_r + i(A_i + B_i)\\
+\end{aligned}$$
+
+$$\begin{aligned}
+S_2 &= w^k_n(A-B)\\
+&= (w^k_{nr} + iw^k_{ni})(A_r+iA_i-B_r-iB_i)\\
+&= w^k_{nr}A_r + iw^k_{ni}A_r + iw^k_{nr}A_i - w^k_{ni}A_i - w^k_{nr}B_r - iw^k_{ni}B_r - iw^k_{nr}B_i + w^k_{ni}B_i\\
+&= w^k_{nr}A_r - w^k_{ni}A_i - w^k_{nr}B_r + w^k_{ni}B_i + i(w^k_{ni}A_r + w^k_{nr}A_i - w^k_{ni}B_r - w^k_{nr}B_i)\\
+&= w^k_{nr}(A_r-B_r) + w^k_{ni}(B_i-A_i) + i(w^k_{nr}(A_i-B_i) + w^k_{ni}(A_r-B_r))\\
+\end{aligned}$$
+
+D'où :
+
+$$\begin{cases}
+S_{1r} = A_r+B_r\\
+S_{1i} = A_i+B_i\\
+S_{2r} = w^k_{nr}(A_r-B_r) + w^k_{ni}(B_i-A_i)\\
+S_{2i} = w^k_{nr}(A_i-B_i) + w^k_{ni}(A_r-B_r)\\
+\end{cases}$$
+
+Les coefficients du papillon sont donnés par $w^k_n=e^{-2i\frac{\pi k}{n}$, d'où $(w^k_{nr},w^k_{ni}) \in \left[-1;1\right]^2$.
 
 ## Implémentation
 
