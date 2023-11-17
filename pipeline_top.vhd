@@ -402,6 +402,7 @@ begin
 				in_37_i <= out_27_i;
 			end if;
 			if en3 = '1' then
+<<<<<<< Updated upstream
 				data_out_r(0*(l+3)+l+2 downto 0*(l+3)) <= out_30_r;
 				data_out_i(0*(l+3)+l+2 downto 0*(l+3)) <= out_30_i;
 				data_out_r(4*(l+3)+l+2 downto 4*(l+3)) <= out_31_r;
@@ -418,6 +419,24 @@ begin
 				data_out_i(3*(l+3)+l+2 downto 3*(l+3)) <= out_36_i;
 				data_out_r(7*(l+3)+l+2 downto 7*(l+3)) <= out_37_r;
 				data_out_i(7*(l+3)+l+2 downto 7*(l+3)) <= out_37_i;
+=======
+				data_out_r <= out_30_r;
+				data_out_i <= out_30_i;
+				data_out_r <= out_34_r;
+				data_out_i <= out_34_i;
+				data_out_r <= out_32_r;
+				data_out_i <= out_32_i;
+				data_out_r <= out_36_r;
+				data_out_i <= out_36_i;
+				data_out_r <= out_31_r;
+				data_out_i <= out_31_i;
+				data_out_r <= out_35_r;
+				data_out_i <= out_35_i;
+				data_out_r <= out_33_r;
+				data_out_i <= out_33_i;
+				data_out_r <= out_37_r;
+				data_out_i <= out_37_i;
+>>>>>>> Stashed changes
 			end if;
 		end if;
 	end process;
