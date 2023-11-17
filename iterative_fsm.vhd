@@ -139,7 +139,7 @@ begin
 				sel_butterfly_output <= '0';
 				w_en <= '0';
 				w_addr <= 0;
-				r_addr <= 0;
+                r_addr <= 0;
 				if out_ready = '1' then
 					next_state <= transmit;
 				else
@@ -157,6 +157,7 @@ begin
 				r_addr <= cpt;
 				if cpt >= 7 then
 					rst_cpt <= '1';
+                    out_valid <= '0';
 					next_state <= wait_data;
 				else
 					rst_cpt <= '0';

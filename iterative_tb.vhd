@@ -127,7 +127,7 @@ begin
 
         file_close(input_data);
 
-        wait for 1000ns;
+        wait for 500ns;
 
         report "end of input file" severity failure;
     end process;
@@ -143,9 +143,12 @@ begin
         wait for 1 ns;
 
         if out_valid = '1' and out_ready = '1' then
+            wait until rising_edge(clk);
             i := 0;
 
             while i < 8 loop
+                wait until rising_edge(clk);
+
                 data_r := real(to_integer(signed(data_out_r))) / 8.0;
                 data_i := real(to_integer(signed(data_out_i))) / 8.0;
 
@@ -155,7 +158,6 @@ begin
                 writeline(output_data, row);
 
                 i := i + 1;
-                wait until rising_edge(clk);
             end loop;
         end if;
 
