@@ -436,7 +436,6 @@ begin
 				data_out_i <= out_33_i;
 				data_out_r <= out_37_r;
 				data_out_i <= out_37_i;
->>>>>>> Stashed changes
 			end if;
 		end if;
 	end process;
