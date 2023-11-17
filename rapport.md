@@ -48,7 +48,7 @@ Le calcul du spectre est basé sur un opérateur complexe appelé "papillon". Ce
 \end{figure}
 \end{centering}
 
-$A$ et $B$ sont codés comme des paires de nombres à virgule fixe au format $(1;l;n)$, avec leurs parties réelle et imaginaire. On a alors :
+On a :
 
 $$\begin{aligned}
 S_1 &= A+B\\
@@ -73,9 +73,11 @@ S_{2r} = w^k_{nr}(A_r-B_r) + w^k_{ni}(B_i-A_i)\\
 S_{2i} = w^k_{nr}(A_i-B_i) + w^k_{ni}(A_r-B_r)\\
 \end{cases}}$$
 
-Les coefficients du papillon sont donnés par $w^k_n=e^{-2i\frac{\pi k}{n}}$, d'où $(w^k_{nr},w^k_{ni}) \in \left[-1;1\right]^2$. 
+Les coefficients du papillon sont donnés par $w^k_n=e^{-2i\frac{\pi k}{n}}$, d'où $(w^k_{nr},w^k_{ni}) \in \left[-1;1\right]^2$.
 
 ## Implémentation
+
+On suppose que $A$ et $B$ sont codés comme des paires de nombres à virgule fixe au format $(1;l;n)$, avec leurs parties réelle et imaginaire. On en déduit que $S_{1r}$ et $S_{1i}$ sont au format $(1;l+1;n)$
 
 # Architecture pipeline
 
