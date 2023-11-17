@@ -29,20 +29,26 @@ header-includes:
 
 ## Théorie
 
-Le calcul du spectre est basé sur un opérateur complexe appelé "papillon". Cet opérateur prend en entrée deux nombres complexes $A = A_r + iA_i$ et $B = B_r + iB_i$ ainsi qu'un coefficient unitaire $w^k_n$, et possède deux sorties complexes $S_1$ et $S_2$ (voir fig. \ref{fig:butterfly}).
+Le calcul du spectre est basé sur un opérateur complexe appelé "papillon". Cet opérateur prend en entrée deux nombres complexes $A$ et $B$ ainsi qu'un coefficient unitaire $w^k_n$, et possède deux sorties complexes $S_1 = A+B$ et $S_2 = w^k_n(A-B)$ (voir fig. \ref{fig:butterfly}).
 
+\begin{centering}
 \begin{figure}
 \begin{circuitikz}
 \draw
 (0,0) node[coupler, scale=2](butt){}
+(butt.n) node[above]{Papillon}
 (butt.left up) to[short, -o] ++(-1,0) node[left, font=\huge]{$A$}
 (butt.left down) to[short, -o] ++(-1,0) node[left, font=\huge]{$B$}
 (butt.right up) to[short, -o] ++(1,0) node[right, font=\huge]{$A+B$}
-(butt.right down) to[short, -o] ++(1,0) node[right, font=\huge]{$w^k_n(A-B)$};
+(butt.right down) to[short, -o] ++(1,0) node[right, font=\huge]{$w^k_n(A-B)$}
+(butt.s) to[short, -o] ++(0,-1) node[below, font=\huge]{$w^k_n$};
 \end{circuitikz}
 \caption{L'opérateur papillon}
 \label{fig:butterfly}
 \end{figure}
+\end{centering}
+
+$A$ et $B$ sont codés comme des nombres à virgule fixe au format $(1;l;n)$ 
 
 ## Implémentation
 
