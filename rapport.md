@@ -29,6 +29,21 @@ header-includes:
 
 ## Théorie
 
+Le calcul du spectre est basé sur un opérateur complexe appelé "papillon". Cet opérateur prend en entrée deux nombres complexes $A = A_r + iA_i$ et $B = B_r + iB_i$ ainsi qu'un coefficient unitaire $w^k_n$, et possède deux sorties complexes $S_1$ et $S_2$ (voir fig. \ref{fig:butterfly}).
+
+\begin{figure}
+\begin{circuitikz}
+\draw
+(0,0) node[coupler, scale=2](butt){}
+(butt.left up) to[short, -o] ++(-1,0) node[left, font=\huge]{$A$}
+(butt.left down) to[short, -o] ++(-1,0) node[left, font=\huge]{$B$}
+(butt.right up) to[short, -o] ++(1,0) node[right, font=\huge]{$A+B$}
+(butt.right down) to[short, -o] ++(1,0) node[right, font=\huge]{$w^k_n(A-B)$};
+\end{circuitikz}
+\caption{L'opérateur papillon}
+\label{fig:butterfly}
+\end{figure}
+
 ## Implémentation
 
 # Architecture pipeline
