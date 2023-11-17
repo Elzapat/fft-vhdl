@@ -31,13 +31,13 @@ header-includes:
 
 Le calcul du spectre est basé sur un opérateur complexe appelé "papillon". Cet opérateur prend en entrée deux nombres complexes $A$ et $B$ ainsi qu'un coefficient unitaire $w^k_n$, et possède deux sorties complexes $S_1 = A+B$ et $S_2 = w^k_n(A-B)$ (voir fig. \ref{fig:butterfly}).
 
-\begin{centering}
-\begin{figure}
+\begin{figure}[h]
+\centering
 \begin{circuitikz}
 \draw
 (0,0) node[coupler, scale=2](butt){}
 (butt.n) node[above]{Papillon}
-(butt.left up) to[short, -o] ++(-1,0) node[left, font=\huge]{$A$}
+(butt.left up) to[short, -o] ++(-1,0) node[left, font=\huge]{$\hspace{4em}A$}
 (butt.left down) to[short, -o] ++(-1,0) node[left, font=\huge]{$B$}
 (butt.right up) to[short, -o] ++(1,0) node[right, font=\huge]{$A+B$}
 (butt.right down) to[short, -o] ++(1,0) node[right, font=\huge]{$w^k_n(A-B)$}
@@ -46,7 +46,6 @@ Le calcul du spectre est basé sur un opérateur complexe appelé "papillon". Ce
 \caption{L'opérateur papillon}
 \label{fig:butterfly}
 \end{figure}
-\end{centering}
 
 On a :
 
@@ -77,7 +76,7 @@ Les coefficients du papillon sont donnés par $w^k_n=e^{-2i\frac{\pi k}{n}}$, d'
 
 ## Implémentation
 
-On suppose que $A$ et $B$ sont codés comme des paires de nombres à virgule fixe au format $(1;l;n)$, avec leurs parties réelle et imaginaire. On en déduit que $S_{1r}$ et $S_{1i}$ sont au format $(1;l+1;n)$
+On suppose que $A_r$, $A_i$, $B_r$ et $B_i$ sont codés comme des nombres à virgule fixe au format $(1;l;n)$. On en déduit que $S_{1r}$, $S_{1i}$, $S_{2r}$ et $S_{2i}$ sont au format $(1;l+1;n)$ car la somme de deux nombres dans l'intervalle $[-2^{l-1};2^{l-1}-1]$ (codable sur $l$ bits) appartient à $[-2^l;2^l-2]$ (codable sur $l+1$ bits).
 
 # Architecture pipeline
 
@@ -206,11 +205,11 @@ Les tableaux suivants indiquent l'ordre dans lequel il faut adresser la RAM en l
 
 ## Implémentation
 
-L'implémentation de l'architecture *Full Iterative* n'utilise qu'une seule instance de l'opérateur papillion qui sera reutilisée pour toutes les opérations. Cela aura l'avantage d'utiliser moins de ressources dans la plupart des cas, mais sera aussi plus lent que l'architecture alternative.
+L'implémentation de l'architecture *Full Iterative* n'utilise qu'une seule instance de l'opérateur papillon qui sera reutilisée pour toutes les opérations. Cela aura l'avantage d'utiliser moins de ressources dans la plupart des cas, mais sera aussi plus lent que l'architecture alternative.
 
-La seule instance de l'opérateur papillion aura ses entrées et ses sorties branchées respectivement sur l'entrée et la sortie de la RAM. Comme la RAM n'a qu'une seule entrée et qu'une seule sortie, il faudra mettre une bascule sur une des entrées et sur une des sorties du papillion. Cela permettera de synchroniser les deux entrées et les deux sorties de l'opérateur papillion.
+La seule instance de l'opérateur papillon aura ses entrées et ses sorties branchées respectivement sur l'entrée et la sortie de la RAM. Comme la RAM n'a qu'une seule entrée et qu'une seule sortie, il faudra mettre une bascule sur une des entrées et sur une des sorties du papillon. Cela permettera de synchroniser les deux entrées et les deux sorties de l'opérateur papillon.
 
-Deux multiplexeurs seront ajoutées pour controller si l'entrée de la RAM viendra de la sortie de l'opérateur papillion ou des données d'entrées.
+Deux multiplexeurs seront ajoutées pour controller si l'entrée de la RAM viendra de la sortie de l'opérateur papillon ou des données d'entrées.
 
 Pour contrôler ce circuit, un compteur basique a été immplementé. Il permettera à la machine à état de décider des adresses auxquelle il faut lire dans la RAM et de calculer les différents états.
 
@@ -226,7 +225,7 @@ L'architecture hybride permet d'essayer de profiter des avantages de l'architect
 
 ## Préparation
 
-Pour combiner les deux architectures étudiés précédemment, il serait possible d'instancier quatres opérateurs papillion, simulant un étage de l'architecture pipeline. Ensuite, à l'instar de l'architecture itérative, une RAM dual port pourrait être instanciée afin de stocker les résultats intermédiaires.
+Pour combiner les deux architectures étudiés précédemment, il serait possible d'instancier quatres opérateurs papillon, simulant un étage de l'architecture pipeline. Ensuite, à l'instar de l'architecture itérative, une RAM dual port pourrait être instanciée afin de stocker les résultats intermédiaires.
 
 ## Structure
 
