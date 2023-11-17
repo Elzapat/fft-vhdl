@@ -7,7 +7,6 @@ author:
 date: Vendredi 17 novembre 2023
 lang: fr
 documentclass: article
-classoption: twocolumn
 numbersections: true
 geometry:
 	- margin=1in
